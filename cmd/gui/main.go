@@ -10,7 +10,7 @@ import (
 )
 
 type config struct {
-	url string
+	url  string
 	addr struct {
 		host string
 		port int

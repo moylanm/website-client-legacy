@@ -6,7 +6,6 @@ import (
 	"mylesmoylan.net/internal/validator"
 )
 
-
 func (app *application) excerptForm() *widget.Form {
 	authorField := widget.NewEntry()
 	workField := widget.NewEntry()

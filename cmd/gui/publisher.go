@@ -32,7 +32,7 @@ func (app *application) publish(excerpt *Excerpt) string {
 	}
 	defer res.Body.Close()
 
-	body, _:= io.ReadAll(res.Body)
+	body, _ := io.ReadAll(res.Body)
 
 	return string(body)
 }

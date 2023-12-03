@@ -9,9 +9,9 @@ import (
 )
 
 type Excerpt struct {
-	Author string	`json:"author"`
-	Work   string	`json:"work"`
-	Body   string	`json:"body"`
+	Author string   `json:"author"`
+	Work   string   `json:"work"`
+	Body   string   `json:"body"`
 	Tags   []string `json:"tags"`
 }
 
