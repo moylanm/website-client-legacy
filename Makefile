@@ -18,7 +18,7 @@ help:
 # run/gui: run the cmd/gui application
 .PHONY: run/gui
 run/gui:
-	@go run ./cmd/gui -admin-username${ADMIN_USERNAME} -admin-password=${ADMIN_PASSWORD}
+	@go run ./cmd/gui -admin-username=${ADMIN_USERNAME} -admin-password=${ADMIN_PASSWORD}
 
 # ==================================================================================== #
 # QUALITY CONTROL
