@@ -5,7 +5,6 @@ import (
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
-	"fyne.io/fyne/v2/container"
 )
 
 type config struct {
@@ -19,6 +18,11 @@ type config struct {
 	}
 }
 
+type application struct {
+	config config
+	window fyne.Window
+}
+
 func main() {
 	var cfg config
 
@@ -30,15 +34,13 @@ func main() {
 
 	flag.Parse()
 
-	app := app.New()
-	window := app.NewWindow("Website Client")
+	gui := app.New()
+	window := gui.NewWindow("Website Client")
 
-	tabs := container.NewAppTabs(
-		container.NewTabItem("Publish", publishForm()),
-		container.NewTabItem("Edit", editList()),
-	)
+	app := &application{
+		config: cfg,
+		window: window,
+	}
 
-	window.Resize(fyne.NewSize(750,500))
-	window.SetContent(tabs)
-	window.ShowAndRun()
+	app.run()
 }
