@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 	"strings"
@@ -11,16 +10,16 @@ import (
 func (app *application) publish(excerpt *Excerpt) string {
 	js, err := json.Marshal(excerpt)
 	if err != nil {
-		return fmt.Sprintf("marshaling error: %s", err.Error())
+		return errorMessage("marshaling error", err)
 	}
 
 	req, err := http.NewRequest(
 		http.MethodPost,
-		fmt.Sprintf("http://%s:%d/excerpts", app.config.addr.host, app.config.addr.port),
+		app.config.url,
 		strings.NewReader(string(js)),
 	)
 	if err != nil {
-		return fmt.Sprintf("request creation error: %s", err.Error())
+		return errorMessage("request creation error", err)
 	}
 
 	req.Header.Set("Content-Type", "application/json")
@@ -29,7 +28,7 @@ func (app *application) publish(excerpt *Excerpt) string {
 	client := &http.Client{}
 	res, err := client.Do(req)
 	if err != nil {
-		return fmt.Sprintf("request send error: %s", err.Error())
+		return errorMessage("request send error", err)
 	}
 	defer res.Body.Close()
 
