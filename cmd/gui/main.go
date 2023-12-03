@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
@@ -9,6 +10,7 @@ import (
 )
 
 type config struct {
+	url string
 	addr struct {
 		host string
 		port int
@@ -35,6 +37,8 @@ func main() {
 	flag.StringVar(&cfg.admin.password, "admin-password", "", "Server admin password")
 
 	flag.Parse()
+
+	cfg.url = fmt.Sprintf("http://%s:%d/excerpts", cfg.addr.host, cfg.addr.port)
 
 	gui := app.New()
 	window := gui.NewWindow("Website Client")
