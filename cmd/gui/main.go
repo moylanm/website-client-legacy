@@ -6,7 +6,6 @@ import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/container"
-	"fyne.io/fyne/v2/widget"
 )
 
 type config struct {
@@ -24,8 +23,8 @@ func main() {
 	window := app.NewWindow("Website Client")
 
 	tabs := container.NewAppTabs(
-		container.NewTabItem("Publish", publishWidget()),
-		container.NewTabItem("Edit", widget.NewLabel("Edit")),
+		container.NewTabItem("Publish", publishForm()),
+		container.NewTabItem("Edit", editList()),
 	)
 
 	window.Resize(fyne.NewSize(750,500))
