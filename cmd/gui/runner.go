@@ -12,7 +12,6 @@ func (app *application) run() {
 	)
 
 	app.window.Resize(fyne.NewSize(750,500))
-	app.window.RequestFocus()
 	app.window.SetContent(tabs)
 	app.window.ShowAndRun()
 }
