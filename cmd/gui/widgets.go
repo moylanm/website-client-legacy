@@ -6,7 +6,7 @@ import (
 )
 
 
-func (app *application) publishForm() *widget.Form {
+func (app *application) excerptForm() *widget.Form {
 	authorField := widget.NewEntry()
 	workField := widget.NewEntry()
 	tagsField := widget.NewEntry()
