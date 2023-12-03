@@ -9,10 +9,10 @@ import (
 )
 
 type Excerpt struct {
-	Author string
-	Work   string
-	Body   string
-	Tags   []string
+	Author string	`json:"author"`
+	Work   string	`json:"work"`
+	Body   string	`json:"body"`
+	Tags   []string `json:"tags"`
 }
 
 func marshalExcerptForm(author, work, tags, body string) *Excerpt {
