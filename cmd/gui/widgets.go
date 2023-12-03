@@ -6,7 +6,7 @@ import (
 )
 
 
-func publishForm() *widget.Form {
+func (app *application) publishForm() *widget.Form {
 	authorField := widget.NewEntry()
 	workField := widget.NewEntry()
 	tagsField := widget.NewEntry()
@@ -29,11 +29,11 @@ func publishForm() *widget.Form {
 		},
 		SubmitText: "Publish",
 		OnSubmit: func() {
-			// submit form
+
 		},
 	}
 }
 
-func editList() *widget.List {
+func (app *application) editList() *widget.List {
 	return &widget.List{}
 }
