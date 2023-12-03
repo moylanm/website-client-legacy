@@ -9,15 +9,26 @@ import (
 )
 
 type config struct {
-	username string
-	password string
+	addr struct {
+		host string
+		port int
+	}
+	admin struct {
+		username string
+		password string
+	}
 }
 
 func main() {
 	var cfg config
 
-	flag.StringVar(&cfg.username, "admin-username", "", "Server admin username")
-	flag.StringVar(&cfg.password, "admin-password", "", "Server admin password")
+	flag.StringVar(&cfg.addr.host, "server-host", "localhost", "Server host")
+	flag.IntVar(&cfg.addr.port, "server-port", 4000, "Server port")
+
+	flag.StringVar(&cfg.admin.username, "admin-username", "", "Server admin username")
+	flag.StringVar(&cfg.admin.password, "admin-password", "", "Server admin password")
+
+	flag.Parse()
 
 	app := app.New()
 	window := app.NewWindow("Website Client")
