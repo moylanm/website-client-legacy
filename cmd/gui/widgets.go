@@ -36,7 +36,7 @@ func (app *application) excerptForm() *widget.Form {
 			if validateExcerpt(v, excerpt); !v.Valid() {
 				app.showPopUp(v.ErrorsToString())
 			} else {
-				// publish
+				app.showPopUp(app.publish(excerpt))
 			}
 		},
 	}
