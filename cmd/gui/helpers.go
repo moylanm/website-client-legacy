@@ -3,6 +3,8 @@ package main
 import (
 	"strings"
 
+	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/widget"
 	"mylesmoylan.net/internal/validator"
 )
 
@@ -33,4 +35,16 @@ func validateExcerpt(v *validator.Validator, excerpt *Excerpt) {
 	v.Check(len(excerpt.Tags) >= 1, "tags", "must contain at least one tag")
 	v.Check(len(excerpt.Tags) <= 5, "tags", "must not contain more than 5 tags")
 	v.Check(validator.Unique(excerpt.Tags), "tags", "must not contain duplicate values")
+}
+
+func (app *application) showPopUp(text string) {
+	app.modal = widget.NewModalPopUp(
+		container.NewVBox(
+			widget.NewRichTextWithText(text),
+			widget.NewButton("Close", func() { app.modal.Hide() }),
+		),
+		app.window.Canvas(),
+	)
+
+	app.modal.Show()
 }
