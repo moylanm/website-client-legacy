@@ -1,11 +1,26 @@
 package validator
 
+import (
+	"fmt"
+	"strings"
+)
+
 type Validator struct {
 	Errors map[string]string
 }
 
 func New() *Validator {
 	return &Validator{Errors: make(map[string]string)}
+}
+
+func (v *Validator) ErrorsToString() string {
+	var sb strings.Builder
+
+	for k, v := range v.Errors {
+		fmt.Fprintf(&sb, "%s: %s\n", k, v)
+	}
+
+	return sb.String()
 }
 
 func (v *Validator) Valid() bool {
