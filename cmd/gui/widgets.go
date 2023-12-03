@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/widget"
 )
 
@@ -10,6 +11,7 @@ func publishWidget() *widget.Form {
 	workField := widget.NewEntry()
 	tagsField := widget.NewEntry()
 	bodyField := widget.NewMultiLineEntry()
+	bodyField.Wrapping = fyne.TextWrapBreak
 
 	return &widget.Form{
 		Items: []*widget.FormItem{
@@ -18,11 +20,14 @@ func publishWidget() *widget.Form {
 			{Text: "Tags", Widget: tagsField},
 			{Text: "Body", Widget: bodyField},
 		},
-		SubmitText: "Publish",
-		OnCancel: func() {
-			// clear form
-		},
 		CancelText: "Clear",
+		OnCancel: func() {
+			authorField.SetText("")
+			workField.SetText("")
+			tagsField.SetText("")
+			bodyField.SetText("")
+		},
+		SubmitText: "Publish",
 		OnSubmit: func() {
 			// submit form
 		},
