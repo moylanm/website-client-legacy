@@ -38,8 +38,16 @@ func main() {
 
 	flag.Parse()
 
-	cfg.url = fmt.Sprintf("http://%s:%d/excerpts", cfg.addr.host, cfg.addr.port)
+	var protocol string
 
+	if cfg.addr.host == "localhost" {
+		protocol = "http"
+	} else {
+		protocol = "https"
+	}
+
+	cfg.url = fmt.Sprintf("%s://%s:%d/excerpts", protocol, cfg.addr.host, cfg.addr.port)
+	
 	gui := app.New()
 	window := gui.NewWindow("Website Client")
 
