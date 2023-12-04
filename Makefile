@@ -43,3 +43,14 @@ vendor:
 	go mod verify
 	@printf 'Vendoring dependencies...\n'
 	go mod vendor
+
+# ==================================================================================== #
+# BUILD
+# ==================================================================================== #
+
+## build/api: build the cmd/api application
+.PHONY: build/api
+build/api:
+	@printf 'Building cmd/api...\n'
+	go build -ldflags='-s -w' -o=./bin/api ./cmd/api
+
