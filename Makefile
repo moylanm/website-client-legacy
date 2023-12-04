@@ -15,10 +15,15 @@ help:
 # DEVELOPMENT
 # ==================================================================================== #
 
-# run/gui: run the cmd/gui application
-.PHONY: run/gui
-run/gui:
-	@go run ./cmd/gui -admin-username=${ADMIN_USERNAME} -admin-password=${ADMIN_PASSWORD}
+# run/local: run the application, pointing to localhost
+.PHONY: run/local
+run/local:
+	@go run ./cmd/gui -admin-username=${LOCAL_USERNAME} -admin-password=${LOCAL_PASSWORD}
+
+# run/remote: run the application, pointing to production
+.PHONY: run/remote
+run/remote:
+	@go run ./cmd/gui -server-host='mylesmoylan.net' -server-port=443 -admin-username=${REMOTE_USERNAME} -admin-password=${REMOTE_PASSWORD}
 
 # ==================================================================================== #
 # QUALITY CONTROL
