@@ -100,7 +100,7 @@ func (app *application) newEntryForm(excerpt Excerpt) *widget.Form {
 		},
 		CancelText: "Delete",
 		OnCancel: func() {
-			// delete entry
+			app.showPopUp(app.deleteExcerpt(excerpt.ID))
 		},
 		SubmitText: "Update",
 		OnSubmit: func() {

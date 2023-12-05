@@ -101,3 +101,27 @@ func (app *application) updateExcerpt(id int64, excerpt *Excerpt) string {
 
 	return string(body)
 }
+
+func (app *application) deleteExcerpt(id int64) string {
+	req, err := http.NewRequest(
+		http.MethodDelete,
+		fmt.Sprintf("%s/%d", app.config.publishUrl, id),
+		nil,
+	)
+	if err != nil {
+		return errorMessage("request creation error", err)
+	}
+
+	req.SetBasicAuth(app.config.admin.username, app.config.admin.password)
+	
+	client := &http.Client{}
+	res, err := client.Do(req)
+	if err != nil {
+		return errorMessage("request send error", err)
+	}
+	defer res.Body.Close()
+
+	body, _ := io.ReadAll(res.Body)
+
+	return string(body)
+}
