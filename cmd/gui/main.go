@@ -10,8 +10,9 @@ import (
 )
 
 type config struct {
-	url  string
-	addr struct {
+	publishUrl string
+	listUrl    string
+	addr       struct {
 		host string
 		port int
 	}
@@ -46,7 +47,8 @@ func main() {
 		protocol = "https"
 	}
 
-	cfg.url = fmt.Sprintf("%s://%s:%d/excerpts", protocol, cfg.addr.host, cfg.addr.port)
+	cfg.publishUrl = fmt.Sprintf("%s://%s:%d/excerpts", protocol, cfg.addr.host, cfg.addr.port)
+	cfg.listUrl = fmt.Sprintf("%s://%s:%d/json/excerpts", protocol, cfg.addr.host, cfg.addr.port)
 
 	gui := app.New()
 	window := gui.NewWindow("Website Client")
