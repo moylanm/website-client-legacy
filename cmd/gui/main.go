@@ -47,7 +47,7 @@ func main() {
 	}
 
 	cfg.url = fmt.Sprintf("%s://%s:%d/excerpts", protocol, cfg.addr.host, cfg.addr.port)
-	
+
 	gui := app.New()
 	window := gui.NewWindow("Website Client")
 

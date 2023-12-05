@@ -29,7 +29,12 @@ func (app *application) excerptForm() *widget.Form {
 		},
 		SubmitText: "Publish",
 		OnSubmit: func() {
-			excerpt := marshalExcerptForm(authorField.Text, workField.Text, tagsField.Text, bodyField.Text)
+			excerpt := marshalExcerptForm(
+				authorField.Text,
+				workField.Text,
+				tagsField.Text,
+				bodyField.Text,
+			)
 			v := validator.New()
 
 			if validateExcerpt(v, excerpt); !v.Valid() {
