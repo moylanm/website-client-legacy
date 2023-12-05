@@ -7,7 +7,7 @@ import (
 
 func (app *application) run() {
 	tabs := container.NewAppTabs(
-		container.NewTabItem("Publish", app.excerptForm()),
+		container.NewTabItem("Publish", app.publishForm()),
 		container.NewTabItem("Edit", app.editList()),
 	)
 
