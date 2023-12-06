@@ -8,10 +8,10 @@ import (
 	"strings"
 )
 
-func (app *application) publishExcerpt(excerpt *Excerpt) string {
+func (app *application) publishExcerpt(excerpt *Excerpt) (string, error) {
 	js, err := json.Marshal(excerpt)
 	if err != nil {
-		return errorMessage("marshaling error", err)
+		return "", err
 	}
 
 	req, err := http.NewRequest(
@@ -20,7 +20,7 @@ func (app *application) publishExcerpt(excerpt *Excerpt) string {
 		strings.NewReader(string(js)),
 	)
 	if err != nil {
-		return errorMessage("request creation error", err)
+		return "", err
 	}
 
 	req.Header.Set("Content-Type", "application/json")
@@ -29,24 +29,23 @@ func (app *application) publishExcerpt(excerpt *Excerpt) string {
 	client := &http.Client{}
 	res, err := client.Do(req)
 	if err != nil {
-		return errorMessage("request send error", err)
+		return "", err
 	}
 	defer res.Body.Close()
 
 	body, _ := io.ReadAll(res.Body)
 
-	return string(body)
+	return string(body), nil
 }
 
-func (app *application) listExcerpts() []Excerpt {
+func (app *application) listExcerpts() ([]Excerpt, error) {
 	req, err := http.NewRequest(
 		http.MethodGet,
 		app.config.listUrl,
 		nil,
 	)
 	if err != nil {
-		fmt.Println(errorMessage("request creation error", err))
-		return []Excerpt{}
+		return nil, err
 	}
 
 	req.SetBasicAuth(app.config.admin.username, app.config.admin.password)
@@ -54,8 +53,7 @@ func (app *application) listExcerpts() []Excerpt {
 	client := &http.Client{}
 	res, err := client.Do(req)
 	if err != nil {
-		fmt.Println(errorMessage("request send error", err))
-		return []Excerpt{}
+		return nil, err
 	}
 	defer res.Body.Close()
 
@@ -65,11 +63,10 @@ func (app *application) listExcerpts() []Excerpt {
 
 	err = dec.Decode(&excerpts)
 	if err != nil {
-		fmt.Println(errorMessage("json decoding error", err))
-		return []Excerpt{}
+		return nil, err
 	}
 
-	return excerpts["excerpts"]
+	return excerpts["excerpts"], nil
 }
 
 func (app *application) updateExcerpt(excerpt *Excerpt) string {

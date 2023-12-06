@@ -43,18 +43,26 @@ func (app *application) publishForm() *widget.Form {
 			if validateExcerpt(v, excerpt); !v.Valid() {
 				app.showPopUp(v.ErrorsToString())
 			} else {
-				app.showPopUp(app.publishExcerpt(excerpt))
-				authorField.SetText("")
-				workField.SetText("")
-				tagsField.SetText("")
-				bodyField.SetText("")
+				res, err := app.publishExcerpt(excerpt)
+				if err != nil {
+					app.showPopUp(err.Error())
+				} else {
+					app.showPopUp(res)
+					authorField.SetText("")
+					workField.SetText("")
+					tagsField.SetText("")
+					bodyField.SetText("")
+				}
 			}
 		},
 	}
 }
 
 func (app *application) editList() *widget.List {
-	excerpts := app.listExcerpts()
+	excerpts, err := app.listExcerpts()
+	if err != nil {
+		app.showPopUp(err.Error())
+	}
 
 	return widget.NewList(
 		func() int {
