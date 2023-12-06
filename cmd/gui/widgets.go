@@ -71,7 +71,7 @@ func (app *application) editList() *widget.List {
 			co.(*widget.Button).OnTapped = func() {
 				w := fyne.CurrentApp().NewWindow(text)
 				w.SetContent(app.newEntryForm(excerpts[lii]))
-				w.Resize(fyne.NewSize(750, 500))
+				w.Resize(fyne.NewSize(750, 400))
 				w.Show()
 			}
 		},
