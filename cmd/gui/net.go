@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-var MessageRX = regexp.MustCompile(`:\W*"([a-z ]*)"`)
+var MessageRX = regexp.MustCompile(`:\s*"([\w\s]*)"`)
 
 func parseMessage(body []byte) string {
 	return MessageRX.FindStringSubmatch(string(body))[1]
