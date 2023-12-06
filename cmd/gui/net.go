@@ -5,8 +5,15 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"regexp"
 	"strings"
 )
+
+var MessageRX = regexp.MustCompile(`:\W*"([a-z ]*)"`)
+
+func parseMessage(body []byte) string {
+	return MessageRX.FindStringSubmatch(string(body))[1]
+}
 
 func (app *application) publishExcerpt(excerpt *Excerpt) (string, error) {
 	js, err := json.Marshal(excerpt)
@@ -35,7 +42,7 @@ func (app *application) publishExcerpt(excerpt *Excerpt) (string, error) {
 
 	body, _ := io.ReadAll(res.Body)
 
-	return string(body), nil
+	return parseMessage(body), nil
 }
 
 func (app *application) listExcerpts() ([]Excerpt, error) {
@@ -96,7 +103,7 @@ func (app *application) updateExcerpt(excerpt Excerpt) (string, error) {
 
 	body, _ := io.ReadAll(res.Body)
 
-	return string(body), nil
+	return parseMessage(body), nil
 }
 
 func (app *application) deleteExcerpt(id int64) (string, error) {
@@ -120,5 +127,5 @@ func (app *application) deleteExcerpt(id int64) (string, error) {
 
 	body, _ := io.ReadAll(res.Body)
 
-	return string(body), nil
+	return parseMessage(body), nil
 }
