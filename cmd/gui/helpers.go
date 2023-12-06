@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/widget"
 	"mylesmoylan.net/internal/validator"
 )
@@ -49,4 +50,14 @@ func (app *application) showPopUp(text string) {
 
 	app.window.RequestFocus()
 	app.modal.Show()
+}
+
+func (app *application) showInfo(title, message string) {
+	app.window.RequestFocus()
+	dialog.ShowInformation(title, message, app.window)
+}
+
+func (app *application) showError(err error) {
+	app.window.RequestFocus()
+	dialog.ShowError(err, app.window)
 }
