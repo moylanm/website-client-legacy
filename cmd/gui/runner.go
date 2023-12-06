@@ -11,7 +11,7 @@ func (app *application) run() {
 		container.NewTabItem("Edit", app.editList()),
 	)
 
-	app.window.Resize(fyne.NewSize(750, 500))
+	app.window.Resize(fyne.NewSize(750, 400))
 	app.window.SetContent(tabs)
 	app.window.ShowAndRun()
 }
