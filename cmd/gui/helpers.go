@@ -47,5 +47,6 @@ func (app *application) showPopUp(text string) {
 		app.window.Canvas(),
 	)
 
+	app.window.RequestFocus()
 	app.modal.Show()
 }
