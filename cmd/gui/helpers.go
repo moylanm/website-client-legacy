@@ -3,9 +3,7 @@ package main
 import (
 	"strings"
 
-	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/dialog"
-	"fyne.io/fyne/v2/widget"
 )
 
 type Excerpt struct {
@@ -23,19 +21,6 @@ func newExcerpt(author, work, tags, body string) *Excerpt {
 		Body:   body,
 		Tags:   strings.Split(strings.ReplaceAll(tags, " ", ""), ","),
 	}
-}
-
-func (app *application) showPopUp(text string) {
-	app.modal = widget.NewModalPopUp(
-		container.NewVBox(
-			widget.NewRichTextWithText(text),
-			widget.NewButton("Close", func() { app.modal.Hide() }),
-		),
-		app.window.Canvas(),
-	)
-
-	app.window.RequestFocus()
-	app.modal.Show()
 }
 
 func (app *application) showInfo(title, message string) {
