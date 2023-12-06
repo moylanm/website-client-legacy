@@ -110,7 +110,7 @@ func (app *application) newEntryForm(excerpt Excerpt) *widget.Form {
 			excerpt.Tags = strings.Split(strings.ReplaceAll(tagsField.Text, " ", ""), ",")
 			excerpt.Body = bodyField.Text
 
-			app.showPopUp(app.updateExcerpt(excerpt.ID, &excerpt))
+			app.showPopUp(app.updateExcerpt(&excerpt))
 		},
 	}
 }

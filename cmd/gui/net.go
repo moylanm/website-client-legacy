@@ -72,7 +72,7 @@ func (app *application) listExcerpts() []Excerpt {
 	return excerpts["excerpts"]
 }
 
-func (app *application) updateExcerpt(id int64, excerpt *Excerpt) string {
+func (app *application) updateExcerpt(excerpt *Excerpt) string {
 	js, err := json.Marshal(excerpt)
 	if err != nil {
 		return errorMessage("marshaling error", err)
@@ -80,7 +80,7 @@ func (app *application) updateExcerpt(id int64, excerpt *Excerpt) string {
 
 	req, err := http.NewRequest(
 		http.MethodPatch,
-		fmt.Sprintf("%s/%d", app.config.publishUrl, id),
+		fmt.Sprintf("%s/%d", app.config.publishUrl, excerpt.ID),
 		strings.NewReader(string(js)),
 	)
 	if err != nil {
