@@ -56,6 +56,7 @@ func (app *application) editList() *widget.List {
 	excerpts, err := app.listExcerpts()
 	if err != nil {
 		app.showError(err)
+		return &widget.List{}
 	}
 
 	return widget.NewList(
