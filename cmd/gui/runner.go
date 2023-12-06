@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
 )
 
@@ -11,7 +10,7 @@ func (app *application) run() {
 		container.NewTabItem("Edit", app.editList()),
 	)
 
-	app.window.Resize(fyne.NewSize(750, 400))
+	app.window.Resize(app.config.windowSize)
 	app.window.SetContent(tabs)
 	app.window.ShowAndRun()
 }
