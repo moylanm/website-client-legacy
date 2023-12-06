@@ -45,7 +45,7 @@ func (app *application) publishForm() *widget.Form {
 			} else {
 				res, err := app.publishExcerpt(excerpt)
 				if err != nil {
-					app.showPopUp(err.Error())
+					app.showError(err)
 				} else {
 					app.showPopUp(res)
 					authorField.SetText("")
@@ -61,7 +61,7 @@ func (app *application) publishForm() *widget.Form {
 func (app *application) editList() *widget.List {
 	excerpts, err := app.listExcerpts()
 	if err != nil {
-		app.showPopUp(err.Error())
+		app.showError(err)
 	}
 
 	return widget.NewList(
@@ -111,7 +111,7 @@ func (app *application) newEntryForm(excerpt Excerpt) *widget.Form {
 		OnCancel: func() {
 			res, err := app.deleteExcerpt(excerpt.ID)
 			if err != nil {
-				app.showPopUp(err.Error())
+				app.showError(err)
 			} else {
 				app.showPopUp(res)
 			}
@@ -125,7 +125,7 @@ func (app *application) newEntryForm(excerpt Excerpt) *widget.Form {
 
 			res, err := app.updateExcerpt(excerpt)
 			if err != nil {
-				app.showPopUp(err.Error())
+				app.showError(err)
 			} else {
 				app.showPopUp(res)
 			}
