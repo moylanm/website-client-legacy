@@ -67,6 +67,7 @@ func (app *application) editList() *widget.List {
 			text := entryText(excerpts[lii])
 
 			co.(*widget.Button).SetText(text)
+			co.(*widget.Button).Alignment = widget.ButtonAlignLeading
 			co.(*widget.Button).OnTapped = func() {
 				w := fyne.CurrentApp().NewWindow(text)
 				w.SetContent(app.newEntryForm(excerpts[lii]))
