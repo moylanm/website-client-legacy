@@ -69,10 +69,10 @@ func (app *application) listExcerpts() ([]Excerpt, error) {
 	return excerpts["excerpts"], nil
 }
 
-func (app *application) updateExcerpt(excerpt *Excerpt) string {
+func (app *application) updateExcerpt(excerpt Excerpt) (string, error) {
 	js, err := json.Marshal(excerpt)
 	if err != nil {
-		return errorMessage("marshaling error", err)
+		return "", err
 	}
 
 	req, err := http.NewRequest(
@@ -81,7 +81,7 @@ func (app *application) updateExcerpt(excerpt *Excerpt) string {
 		strings.NewReader(string(js)),
 	)
 	if err != nil {
-		return errorMessage("request creation error", err)
+		return "", err
 	}
 
 	req.Header.Set("Content-Type", "application/json")
@@ -90,23 +90,23 @@ func (app *application) updateExcerpt(excerpt *Excerpt) string {
 	client := &http.Client{}
 	res, err := client.Do(req)
 	if err != nil {
-		return errorMessage("request send error", err)
+		return "", err
 	}
 	defer res.Body.Close()
 
 	body, _ := io.ReadAll(res.Body)
 
-	return string(body)
+	return string(body), nil
 }
 
-func (app *application) deleteExcerpt(id int64) string {
+func (app *application) deleteExcerpt(id int64) (string, error) {
 	req, err := http.NewRequest(
 		http.MethodDelete,
 		fmt.Sprintf("%s/%d", app.config.publishUrl, id),
 		nil,
 	)
 	if err != nil {
-		return errorMessage("request creation error", err)
+		return "", err
 	}
 
 	req.SetBasicAuth(app.config.admin.username, app.config.admin.password)
@@ -114,11 +114,11 @@ func (app *application) deleteExcerpt(id int64) string {
 	client := &http.Client{}
 	res, err := client.Do(req)
 	if err != nil {
-		return errorMessage("request send error", err)
+		return "", err
 	}
 	defer res.Body.Close()
 
 	body, _ := io.ReadAll(res.Body)
 
-	return string(body)
+	return string(body), nil
 }

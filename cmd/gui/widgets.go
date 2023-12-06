@@ -109,7 +109,12 @@ func (app *application) newEntryForm(excerpt Excerpt) *widget.Form {
 		},
 		CancelText: "Delete",
 		OnCancel: func() {
-			app.showPopUp(app.deleteExcerpt(excerpt.ID))
+			res, err := app.deleteExcerpt(excerpt.ID)
+			if err != nil {
+				app.showPopUp(err.Error())
+			} else {
+				app.showPopUp(res)
+			}
 		},
 		SubmitText: "Update",
 		OnSubmit: func() {
@@ -118,7 +123,12 @@ func (app *application) newEntryForm(excerpt Excerpt) *widget.Form {
 			excerpt.Tags = strings.Split(strings.ReplaceAll(tagsField.Text, " ", ""), ",")
 			excerpt.Body = bodyField.Text
 
-			app.showPopUp(app.updateExcerpt(&excerpt))
+			res, err := app.updateExcerpt(excerpt)
+			if err != nil {
+				app.showPopUp(err.Error())
+			} else {
+				app.showPopUp(res)
+			}
 		},
 	}
 }
