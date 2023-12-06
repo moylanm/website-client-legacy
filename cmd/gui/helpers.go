@@ -9,7 +9,7 @@ import (
 )
 
 type Excerpt struct {
-	ID     int64    `json:"id"`
+	ID     int64    `json:"id,omitempty"`
 	Author string   `json:"author"`
 	Work   string   `json:"work"`
 	Body   string   `json:"body"`
