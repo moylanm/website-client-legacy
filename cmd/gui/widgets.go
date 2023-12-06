@@ -14,7 +14,7 @@ func (app *application) publishForm() *widget.Form {
 	workField := widget.NewEntry()
 	tagsField := widget.NewEntry()
 	bodyField := widget.NewMultiLineEntry()
-	bodyField.Wrapping = fyne.TextWrapBreak
+	bodyField.Wrapping = fyne.TextWrapWord
 
 	return &widget.Form{
 		Items: []*widget.FormItem{
@@ -89,7 +89,7 @@ func (app *application) newEntryForm(excerpt Excerpt) *widget.Form {
 	tagsField.SetText(strings.Join(excerpt.Tags, ","))
 
 	bodyField := widget.NewMultiLineEntry()
-	bodyField.Wrapping = fyne.TextWrapBreak
+	bodyField.Wrapping = fyne.TextWrapWord
 	bodyField.SetText(excerpt.Body)
 
 	return &widget.Form{
