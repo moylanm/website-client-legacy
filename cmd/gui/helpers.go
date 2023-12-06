@@ -16,7 +16,7 @@ type Excerpt struct {
 	Tags   []string `json:"tags"`
 }
 
-func marshalExcerptForm(author, work, tags, body string) *Excerpt {
+func newExcerpt(author, work, tags, body string) *Excerpt {
 	return &Excerpt{
 		Author: author,
 		Work:   work,

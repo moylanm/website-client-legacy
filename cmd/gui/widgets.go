@@ -32,7 +32,7 @@ func (app *application) publishForm() *widget.Form {
 		},
 		SubmitText: "Publish",
 		OnSubmit: func() {
-			excerpt := marshalExcerptForm(
+			excerpt := newExcerpt(
 				authorField.Text,
 				workField.Text,
 				tagsField.Text,

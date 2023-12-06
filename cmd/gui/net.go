@@ -110,7 +110,7 @@ func (app *application) deleteExcerpt(id int64) (string, error) {
 	}
 
 	req.SetBasicAuth(app.config.admin.username, app.config.admin.password)
-	
+
 	client := &http.Client{}
 	res, err := client.Do(req)
 	if err != nil {
