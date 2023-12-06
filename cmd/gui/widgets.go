@@ -6,7 +6,6 @@ import (
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/widget"
-	"mylesmoylan.net/internal/validator"
 )
 
 func (app *application) publishForm() *widget.Form {
@@ -38,21 +37,16 @@ func (app *application) publishForm() *widget.Form {
 				tagsField.Text,
 				bodyField.Text,
 			)
-			v := validator.New()
 
-			if validateExcerpt(v, excerpt); !v.Valid() {
-				app.showPopUp(v.ErrorsToString())
+			res, err := app.publishExcerpt(excerpt)
+			if err != nil {
+				app.showError(err)
 			} else {
-				res, err := app.publishExcerpt(excerpt)
-				if err != nil {
-					app.showError(err)
-				} else {
-					app.showPopUp(res)
-					authorField.SetText("")
-					workField.SetText("")
-					tagsField.SetText("")
-					bodyField.SetText("")
-				}
+				app.showInfo("Publish", res)
+				authorField.SetText("")
+				workField.SetText("")
+				tagsField.SetText("")
+				bodyField.SetText("")
 			}
 		},
 	}
@@ -113,7 +107,7 @@ func (app *application) newEntryForm(excerpt Excerpt) *widget.Form {
 			if err != nil {
 				app.showError(err)
 			} else {
-				app.showPopUp(res)
+				app.showInfo("Delete", res)
 			}
 		},
 		SubmitText: "Update",
@@ -127,7 +121,7 @@ func (app *application) newEntryForm(excerpt Excerpt) *widget.Form {
 			if err != nil {
 				app.showError(err)
 			} else {
-				app.showPopUp(res)
+				app.showInfo("Update", res)
 			}
 		},
 	}
