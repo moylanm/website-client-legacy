@@ -8,6 +8,10 @@ import (
 	"fyne.io/fyne/v2/widget"
 )
 
+func entryText(excerpt Excerpt) string {
+	return fmt.Sprintf("%s - %s", excerpt.Author, excerpt.Work)
+}
+
 func (app *application) publishForm() *widget.Form {
 	authorField := widget.NewEntry()
 	workField := widget.NewEntry()
@@ -73,7 +77,7 @@ func (app *application) editList() *widget.List {
 			co.(*widget.Button).Alignment = widget.ButtonAlignLeading
 			co.(*widget.Button).OnTapped = func() {
 				w := fyne.CurrentApp().NewWindow(text)
-				w.SetContent(app.newEntryForm(excerpts[lii]))
+				w.SetContent(app.newEntryForm(w, excerpts[lii]))
 				w.Resize(app.config.windowSize)
 				w.Show()
 			}
@@ -81,7 +85,7 @@ func (app *application) editList() *widget.List {
 	)
 }
 
-func (app *application) newEntryForm(excerpt Excerpt) *widget.Form {
+func (app *application) newEntryForm(window fyne.Window, excerpt Excerpt) *widget.Form {
 	authorField := widget.NewEntry()
 	authorField.SetText(excerpt.Author)
 
@@ -106,8 +110,10 @@ func (app *application) newEntryForm(excerpt Excerpt) *widget.Form {
 		OnCancel: func() {
 			res, err := app.deleteExcerpt(excerpt.ID)
 			if err != nil {
+				window.Close()
 				app.showError(err)
 			} else {
+				window.Close()
 				app.showInfo("Delete", res)
 			}
 		},
@@ -120,14 +126,12 @@ func (app *application) newEntryForm(excerpt Excerpt) *widget.Form {
 
 			res, err := app.updateExcerpt(excerpt)
 			if err != nil {
+				window.Close()
 				app.showError(err)
 			} else {
+				window.Close()
 				app.showInfo("Update", res)
 			}
 		},
 	}
-}
-
-func entryText(excerpt Excerpt) string {
-	return fmt.Sprintf("%s - %s", excerpt.Author, excerpt.Work)
 }

@@ -24,11 +24,9 @@ func newExcerpt(author, work, tags, body string) *Excerpt {
 }
 
 func (app *application) showInfo(title, message string) {
-	app.window.RequestFocus()
 	dialog.ShowInformation(title, message, app.window)
 }
 
 func (app *application) showError(err error) {
-	app.window.RequestFocus()
 	dialog.ShowError(err, app.window)
 }
