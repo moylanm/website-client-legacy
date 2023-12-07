@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -45,7 +46,13 @@ func (app *application) publishExcerpt(excerpt *Excerpt) (string, error) {
 		return "", err
 	}
 
-	return parseMessage(body), nil
+	message := parseMessage(body)
+
+	if message != "excerpt successfully created" {
+		return "", errors.New(message)
+	}
+
+	return message, nil
 }
 
 func (app *application) listExcerpts() ([]Excerpt, error) {
@@ -109,7 +116,13 @@ func (app *application) updateExcerpt(excerpt Excerpt) (string, error) {
 		return "", err
 	}
 
-	return parseMessage(body), nil
+	message := parseMessage(body)
+
+	if message != "excerpt successfully updated" {
+		return "", errors.New(message)
+	}
+
+	return message, nil
 }
 
 func (app *application) deleteExcerpt(id int64) (string, error) {
@@ -136,5 +149,11 @@ func (app *application) deleteExcerpt(id int64) (string, error) {
 		return "", err
 	}
 
-	return parseMessage(body), nil
+	message := parseMessage(body)
+
+	if message != "excerpt successfully deleted" {
+		return "", errors.New(message)
+	}
+
+	return message, nil
 }
