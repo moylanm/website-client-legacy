@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"strings"
 
+	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/dialog"
 )
 
@@ -21,6 +23,40 @@ func newExcerpt(author, work, tags, body string) *Excerpt {
 		Body:   body,
 		Tags:   strings.Split(strings.ReplaceAll(tags, " ", ""), ","),
 	}
+}
+
+func (app *application) fetchExcerpts() {
+	var err error
+
+	app.excerpts, err = app.listExcerpts()
+	if err != nil {
+		fmt.Printf("error fetching excerpts: %s", err.Error())
+	}
+}
+
+func (app *application) refreshAfterPublish() {
+	app.fetchExcerpts()
+
+	tabs := container.NewAppTabs(
+		container.NewTabItem("Publish", app.publishForm()),
+		container.NewTabItem("Edit", app.editList()),
+	)
+
+	app.window.SetContent(tabs)
+}
+
+func (app *application) refreshAfterEdit() {
+	app.fetchExcerpts()
+
+	editTab := container.NewTabItem("Edit", app.editList())
+
+	tabs := container.NewAppTabs(
+		container.NewTabItem("Publish", app.publishForm()),
+		editTab,
+	)
+
+	tabs.Select(editTab)
+	app.window.SetContent(tabs)
 }
 
 func (app *application) showInfo(title, message string) {
