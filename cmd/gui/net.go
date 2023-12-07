@@ -10,10 +10,12 @@ import (
 	"strings"
 )
 
-var messageRX = regexp.MustCompile(`:\s*"([\w\s]*)"`)
+var messageRX = regexp.MustCompile(`"([\w\s]*)"\s*:\s*"([\w\s]*)"`)
 
-func parseMessage(body []byte) string {
-	return messageRX.FindStringSubmatch(string(body))[1]
+func parseMessage(body []byte) (string, string) {
+	message := messageRX.FindStringSubmatch(string(body))
+
+	return message[1], message[2]
 }
 
 func (app *application) publishExcerpt(excerpt *Excerpt) (string, error) {
@@ -46,9 +48,8 @@ func (app *application) publishExcerpt(excerpt *Excerpt) (string, error) {
 		return "", err
 	}
 
-	message := parseMessage(body)
-
-	if message != "excerpt successfully created" {
+	message, desc := parseMessage(body)
+	if desc != "error" {
 		return "", errors.New(message)
 	}
 
@@ -116,9 +117,8 @@ func (app *application) updateExcerpt(excerpt Excerpt) (string, error) {
 		return "", err
 	}
 
-	message := parseMessage(body)
-
-	if message != "excerpt successfully updated" {
+	message, desc := parseMessage(body)
+	if desc != "error" {
 		return "", errors.New(message)
 	}
 
@@ -149,9 +149,8 @@ func (app *application) deleteExcerpt(id int64) (string, error) {
 		return "", err
 	}
 
-	message := parseMessage(body)
-
-	if message != "excerpt successfully deleted" {
+	message, desc := parseMessage(body)
+	if desc != "error" {
 		return "", errors.New(message)
 	}
 
