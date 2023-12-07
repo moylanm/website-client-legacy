@@ -40,7 +40,10 @@ func (app *application) publishExcerpt(excerpt *Excerpt) (string, error) {
 	}
 	defer res.Body.Close()
 
-	body, _ := io.ReadAll(res.Body)
+	body, err := io.ReadAll(res.Body)
+	if err != nil {
+		return "", err
+	}
 
 	return parseMessage(body), nil
 }
@@ -101,7 +104,10 @@ func (app *application) updateExcerpt(excerpt Excerpt) (string, error) {
 	}
 	defer res.Body.Close()
 
-	body, _ := io.ReadAll(res.Body)
+	body, err := io.ReadAll(res.Body)
+	if err != nil {
+		return "", err
+	}
 
 	return parseMessage(body), nil
 }
@@ -125,7 +131,10 @@ func (app *application) deleteExcerpt(id int64) (string, error) {
 	}
 	defer res.Body.Close()
 
-	body, _ := io.ReadAll(res.Body)
+	body, err := io.ReadAll(res.Body)
+	if err != nil {
+		return "", err
+	}
 
 	return parseMessage(body), nil
 }
