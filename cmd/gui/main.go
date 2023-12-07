@@ -6,7 +6,6 @@ import (
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
-	"fyne.io/fyne/v2/widget"
 )
 
 type config struct {
@@ -24,9 +23,9 @@ type config struct {
 }
 
 type application struct {
-	config config
-	window fyne.Window
-	modal  *widget.PopUp
+	config   config
+	window   fyne.Window
+	excerpts []Excerpt
 }
 
 func main() {
@@ -58,8 +57,9 @@ func main() {
 	app := &application{
 		config: cfg,
 		window: window,
-		modal:  &widget.PopUp{},
 	}
+
+	app.fetchExcerpts()
 
 	app.run()
 }
