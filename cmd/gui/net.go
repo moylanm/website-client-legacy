@@ -9,10 +9,10 @@ import (
 	"strings"
 )
 
-var MessageRX = regexp.MustCompile(`:\s*"([\w\s]*)"`)
+var messageRX = regexp.MustCompile(`:\s*"([\w\s]*)"`)
 
 func parseMessage(body []byte) string {
-	return MessageRX.FindStringSubmatch(string(body))[1]
+	return messageRX.FindStringSubmatch(string(body))[1]
 }
 
 func (app *application) publishExcerpt(excerpt *Excerpt) (string, error) {
