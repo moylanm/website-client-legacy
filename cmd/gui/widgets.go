@@ -46,38 +46,29 @@ func (app *application) publishForm() *widget.Form {
 			if err != nil {
 				app.showError(err)
 			} else {
-				app.showInfo("Publish", res)
-				authorField.SetText("")
-				workField.SetText("")
-				tagsField.SetText("")
-				bodyField.SetText("")
+				app.refreshAfterPublish()
+				app.showInfo("Server Response", res)
 			}
 		},
 	}
 }
 
 func (app *application) editList() *widget.List {
-	excerpts, err := app.listExcerpts()
-	if err != nil {
-		app.showError(err)
-		return &widget.List{}
-	}
-
 	return widget.NewList(
 		func() int {
-			return len(excerpts)
+			return len(app.excerpts)
 		},
 		func() fyne.CanvasObject {
 			return &widget.Button{}
 		},
 		func(lii widget.ListItemID, co fyne.CanvasObject) {
-			text := entryText(excerpts[lii])
+			text := entryText(app.excerpts[lii])
 
 			co.(*widget.Button).SetText(text)
 			co.(*widget.Button).Alignment = widget.ButtonAlignLeading
 			co.(*widget.Button).OnTapped = func() {
 				w := fyne.CurrentApp().NewWindow(text)
-				w.SetContent(app.newEntryForm(w, excerpts[lii]))
+				w.SetContent(app.newEntryForm(w, app.excerpts[lii]))
 				w.Resize(app.config.windowSize)
 				w.Show()
 			}
@@ -114,7 +105,8 @@ func (app *application) newEntryForm(window fyne.Window, excerpt Excerpt) *widge
 				app.showError(err)
 			} else {
 				window.Close()
-				app.showInfo("Delete", res)
+				app.refreshAfterEdit()
+				app.showInfo("Server Response", res)
 			}
 		},
 		SubmitText: "Update",
@@ -130,7 +122,8 @@ func (app *application) newEntryForm(window fyne.Window, excerpt Excerpt) *widge
 				app.showError(err)
 			} else {
 				window.Close()
-				app.showInfo("Update", res)
+				app.refreshAfterEdit()
+				app.showInfo("Server Response", res)
 			}
 		},
 	}
