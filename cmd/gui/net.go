@@ -10,20 +10,22 @@ import (
 	"strings"
 )
 
-var messageRX = regexp.MustCompile(`:\s*"([\w\s]*)"`)
+var messageRX = regexp.MustCompile(`"([\w\s]*)"\s*:\s*"([\w\s]*)"`)
 
-func parseMessage(body []byte) string {
-	return messageRX.FindStringSubmatch(string(body))[1]
+func parseMessage(body []byte) (string, string) {
+	message := messageRX.FindStringSubmatch(string(body))
+
+	return message[2], message[1]
 }
 
-func (app *application) listExcerpts() ([]Excerpt, error) {
-	req, err := http.NewRequest(
-		http.MethodGet,
-		app.config.listUrl,
-		nil,
-	)
+func (app *application) makeAPIRequest(method, url string, body io.Reader, headers http.Header) ([]byte, error) {
+	req, err := http.NewRequest(method, url, body)
 	if err != nil {
 		return nil, err
+	}
+
+	for key, value := range headers {
+		req.Header[key] = value
 	}
 
 	req.SetBasicAuth(app.config.admin.username, app.config.admin.password)
@@ -35,12 +37,28 @@ func (app *application) listExcerpts() ([]Excerpt, error) {
 	}
 	defer res.Body.Close()
 
+	responseBody, err := io.ReadAll(res.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	return responseBody, nil
+}
+
+func (app *application) listExcerpts() ([]Excerpt, error) {
+	responseBody, err := app.makeAPIRequest(
+		http.MethodGet,
+		app.config.listUrl,
+		nil,
+		nil,
+	)
+	if err != nil {
+		return nil, err
+	}
+
 	var excerpts map[string][]Excerpt
 
-	dec := json.NewDecoder(res.Body)
-
-	err = dec.Decode(&excerpts)
-	if err != nil {
+	if err := json.Unmarshal(responseBody, &excerpts); err != nil {
 		return nil, err
 	}
 
@@ -53,33 +71,21 @@ func (app *application) publishExcerpt(excerpt *Excerpt) (string, error) {
 		return "", err
 	}
 
-	req, err := http.NewRequest(
+	headers := make(http.Header)
+	headers.Set("Content-Type", "application/json")
+	
+	responseBody, err := app.makeAPIRequest(
 		http.MethodPost,
 		app.config.publishUrl,
 		strings.NewReader(string(js)),
+		headers,
 	)
 	if err != nil {
 		return "", err
 	}
 
-	req.Header.Set("Content-Type", "application/json")
-	req.SetBasicAuth(app.config.admin.username, app.config.admin.password)
-
-	client := &http.Client{}
-	res, err := client.Do(req)
-	if err != nil {
-		return "", err
-	}
-	defer res.Body.Close()
-
-	body, err := io.ReadAll(res.Body)
-	if err != nil {
-		return "", err
-	}
-
-	message := parseMessage(body)
-
-	if res.StatusCode != http.StatusCreated {
+	message, desc := parseMessage(responseBody)
+	if desc == "error" {
 		return "", errors.New(message)
 	}
 
@@ -92,33 +98,21 @@ func (app *application) updateExcerpt(excerpt Excerpt) (string, error) {
 		return "", err
 	}
 
-	req, err := http.NewRequest(
+	headers := make(http.Header)
+	headers.Set("Content-Type", "application/json")
+
+	responseBody, err := app.makeAPIRequest(
 		http.MethodPatch,
 		fmt.Sprintf("%s/%d", app.config.publishUrl, excerpt.ID),
 		strings.NewReader(string(js)),
+		headers,
 	)
 	if err != nil {
 		return "", err
 	}
 
-	req.Header.Set("Content-Type", "application/json")
-	req.SetBasicAuth(app.config.admin.username, app.config.admin.password)
-
-	client := &http.Client{}
-	res, err := client.Do(req)
-	if err != nil {
-		return "", err
-	}
-	defer res.Body.Close()
-
-	body, err := io.ReadAll(res.Body)
-	if err != nil {
-		return "", err
-	}
-
-	message := parseMessage(body)
-
-	if res.StatusCode != http.StatusOK {
+	message, desc := parseMessage(responseBody)
+	if desc == "error" {
 		return "", errors.New(message)
 	}
 
@@ -126,32 +120,18 @@ func (app *application) updateExcerpt(excerpt Excerpt) (string, error) {
 }
 
 func (app *application) deleteExcerpt(id int64) (string, error) {
-	req, err := http.NewRequest(
+	responseBody, err := app.makeAPIRequest(
 		http.MethodDelete,
 		fmt.Sprintf("%s/%d", app.config.publishUrl, id),
+		nil,
 		nil,
 	)
 	if err != nil {
 		return "", err
 	}
 
-	req.SetBasicAuth(app.config.admin.username, app.config.admin.password)
-
-	client := &http.Client{}
-	res, err := client.Do(req)
-	if err != nil {
-		return "", err
-	}
-	defer res.Body.Close()
-
-	body, err := io.ReadAll(res.Body)
-	if err != nil {
-		return "", err
-	}
-
-	message := parseMessage(body)
-
-	if res.StatusCode != http.StatusOK {
+	message, desc := parseMessage(responseBody)
+	if desc == "error" {
 		return "", errors.New(message)
 	}
 
