@@ -73,7 +73,7 @@ func (app *application) publishExcerpt(excerpt *Excerpt) (string, error) {
 
 	headers := make(http.Header)
 	headers.Set("Content-Type", "application/json")
-	
+
 	responseBody, err := app.makeAPIRequest(
 		http.MethodPost,
 		app.config.publishUrl,
