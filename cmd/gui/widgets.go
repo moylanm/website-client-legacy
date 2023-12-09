@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"strings"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/widget"
@@ -15,7 +14,6 @@ func entryText(excerpt Excerpt) string {
 func (app *application) publishForm() *widget.Form {
 	authorField := widget.NewEntry()
 	workField := widget.NewEntry()
-	tagsField := widget.NewEntry()
 	bodyField := widget.NewMultiLineEntry()
 	bodyField.Wrapping = fyne.TextWrapWord
 
@@ -23,14 +21,12 @@ func (app *application) publishForm() *widget.Form {
 		Items: []*widget.FormItem{
 			{Text: "Author", Widget: authorField},
 			{Text: "Work", Widget: workField},
-			{Text: "Tags", Widget: tagsField},
 			{Text: "Body", Widget: bodyField},
 		},
 		CancelText: "Clear",
 		OnCancel: func() {
 			authorField.SetText("")
 			workField.SetText("")
-			tagsField.SetText("")
 			bodyField.SetText("")
 		},
 		SubmitText: "Publish",
@@ -38,7 +34,6 @@ func (app *application) publishForm() *widget.Form {
 			excerpt := newExcerpt(
 				authorField.Text,
 				workField.Text,
-				tagsField.Text,
 				bodyField.Text,
 			)
 
@@ -83,9 +78,6 @@ func (app *application) newEntryForm(window fyne.Window, excerpt Excerpt) *widge
 	workField := widget.NewEntry()
 	workField.SetText(excerpt.Work)
 
-	tagsField := widget.NewEntry()
-	tagsField.SetText(strings.Join(excerpt.Tags, ","))
-
 	bodyField := widget.NewMultiLineEntry()
 	bodyField.Wrapping = fyne.TextWrapWord
 	bodyField.SetText(excerpt.Body)
@@ -94,7 +86,6 @@ func (app *application) newEntryForm(window fyne.Window, excerpt Excerpt) *widge
 		Items: []*widget.FormItem{
 			{Text: "Author", Widget: authorField},
 			{Text: "Work", Widget: workField},
-			{Text: "Tags", Widget: tagsField},
 			{Text: "Body", Widget: bodyField},
 		},
 		CancelText: "Delete",
@@ -113,7 +104,6 @@ func (app *application) newEntryForm(window fyne.Window, excerpt Excerpt) *widge
 		OnSubmit: func() {
 			excerpt.Author = authorField.Text
 			excerpt.Work = workField.Text
-			excerpt.Tags = strings.Split(strings.ReplaceAll(tagsField.Text, " ", ""), ",")
 			excerpt.Body = bodyField.Text
 
 			res, err := app.updateExcerpt(excerpt)

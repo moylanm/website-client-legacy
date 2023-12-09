@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"strings"
 
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/dialog"
@@ -13,15 +12,13 @@ type Excerpt struct {
 	Author string   `json:"author"`
 	Work   string   `json:"work"`
 	Body   string   `json:"body"`
-	Tags   []string `json:"tags"`
 }
 
-func newExcerpt(author, work, tags, body string) *Excerpt {
+func newExcerpt(author, work, body string) *Excerpt {
 	return &Excerpt{
 		Author: author,
 		Work:   work,
 		Body:   body,
-		Tags:   strings.Split(strings.ReplaceAll(tags, " ", ""), ","),
 	}
 }
 
