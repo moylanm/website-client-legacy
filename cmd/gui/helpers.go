@@ -8,10 +8,10 @@ import (
 )
 
 type Excerpt struct {
-	ID     int64    `json:"id,omitempty"`
-	Author string   `json:"author"`
-	Work   string   `json:"work"`
-	Body   string   `json:"body"`
+	ID     int64  `json:"id,omitempty"`
+	Author string `json:"author"`
+	Work   string `json:"work"`
+	Body   string `json:"body"`
 }
 
 func newExcerpt(author, work, body string) *Excerpt {
