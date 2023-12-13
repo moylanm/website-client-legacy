@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/widget"
 )
 
@@ -90,15 +91,26 @@ func (app *application) newEntryForm(window fyne.Window, excerpt Excerpt) *widge
 		},
 		CancelText: "Delete",
 		OnCancel: func() {
-			res, err := app.deleteExcerpt(excerpt.ID)
-			if err != nil {
-				window.Close()
-				app.showError(err)
-			} else {
-				window.Close()
-				app.refreshAfterEdit()
-				app.showInfo("Server Response", res)
-			}
+			confirmDialog := dialog.NewConfirm(
+				"Delete Excerpt",
+				"Are you sure?",
+				func(b bool) {
+					if b {
+						res, err := app.deleteExcerpt(excerpt.ID)
+						if err != nil {
+							window.Close()
+							app.showError(err)
+						} else {
+							window.Close()
+							app.refreshAfterEdit()
+							app.showInfo("Server Response", res)
+						}
+					}
+				},
+				window,
+			)
+
+			confirmDialog.Show()
 		},
 		SubmitText: "Update",
 		OnSubmit: func() {
