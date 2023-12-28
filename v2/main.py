@@ -12,52 +12,68 @@ class MainWindow(QMainWindow):
         self.resize(800, 600)
 
         # Tabs
-        self.tabWidget = QTabWidget(self)
-        self.tabWidget.setGeometry(QRect(0, 0, 800, 590))
-        self.publishTab = QWidget()
-        self.editTab = QWidget()
-        self.tabWidget.addTab(self.publishTab, "")
-        self.tabWidget.setTabText(0, u"Publish")
-        self.tabWidget.addTab(self.editTab, "")
-        self.tabWidget.setTabText(1, u"Edit")
-        self.tabWidget.setCurrentIndex(0)
+        self.tab_widget = QTabWidget(self)
+        self.tab_widget.setGeometry(QRect(0, 0, 800, 590))
+        self.publish_tab = QWidget()
+        self.edit_tab = QWidget()
+        self.tab_widget.addTab(self.publish_tab, "")
+        self.tab_widget.setTabText(0, u"Publish")
+        self.tab_widget.addTab(self.edit_tab, "")
+        self.tab_widget.setTabText(1, u"Edit")
+        self.tab_widget.setCurrentIndex(0)
 
-        # Publish tab
-        self.publishGroupBox = QGroupBox(self.publishTab)
-        self.publishGroupBox.resize(800, 560)
-        self.authorLabel = QLabel(self.publishGroupBox)
-        self.authorLabel.setText(u"Author :")
-        self.authorLabel.setGeometry(QRect(15, 10, 60, 30))
-        self.workLabel = QLabel(self.publishGroupBox)
-        self.workLabel.setText(u"Work :")
-        self.workLabel.setGeometry(QRect(25, 50, 50, 30))
-        self.bodyLabel = QLabel(self.publishGroupBox)
-        self.bodyLabel.setText(u"Body :")
-        self.bodyLabel.setGeometry(QRect(25, 88, 60, 30))
-        self.authorField = QLineEdit(self.publishGroupBox)
-        self.authorField.setGeometry(QRect(70, 10, 330, 30))
-        self.workField = QLineEdit(self.publishGroupBox)
-        self.workField.setGeometry(QRect(70, 50, 330, 30))
-        self.bodyField = QTextEdit(self.publishGroupBox)
-        self.bodyField.setGeometry(QRect(70, 90, 690, 370))
-        self.publishButton = QPushButton(self.publishGroupBox)
-        self.publishButton.setText(u"Publish")
-        self.publishButton.setGeometry(QRect(640, 465, 120, 40))
-        self.publishButton.clicked.connect(self.publish)
-        self.clearButton = QPushButton(self.publishGroupBox)
-        self.clearButton.setText(u"Clear")
-        self.clearButton.setGeometry(QRect(510, 465, 120, 40))
-        self.clearButton.clicked.connect(self.clear)
+        # Publish tab 
+        self.publish_view = PublishTabView(self.publish_tab)
 
+        # Edit tab
+        self.edit_view = EditTabView(self.edit_tab)
+
+class PublishTabView:
+
+    def __init__(self, parent):
+        self.group_box = QGroupBox(parent)
+        self.group_box.resize(800, 560)
+        self.author_label = QLabel(self.group_box)
+        self.author_label.setText(u"Author :")
+        self.author_label.setGeometry(QRect(15, 10, 60, 30))
+        self.work_label = QLabel(self.group_box)
+        self.work_label.setText(u"Work :")
+        self.work_label.setGeometry(QRect(25, 50, 50, 30))
+        self.body_label = QLabel(self.group_box)
+        self.body_label.setText(u"Body :")
+        self.body_label.setGeometry(QRect(25, 88, 60, 30))
+        self.author_field = QLineEdit(self.group_box)
+        self.author_field.setGeometry(QRect(70, 10, 330, 30))
+        self.work_field = QLineEdit(self.group_box)
+        self.work_field.setGeometry(QRect(70, 50, 330, 30))
+        self.body_field = QTextEdit(self.group_box)
+        self.body_field.setGeometry(QRect(70, 90, 690, 370))
+        self.publish_button = QPushButton(self.group_box)
+        self.publish_button.setText(u"Publish")
+        self.publish_button.setGeometry(QRect(640, 465, 120, 40))
+        self.publish_button.clicked.connect(self.publish)
+        self.clear_button = QPushButton(self.group_box)
+        self.clear_button.setText(u"Clear")
+        self.clear_button.setGeometry(QRect(510, 465, 120, 40))
+        self.clear_button.clicked.connect(self.clear)
+    
     def publish(self):
-        print(self.authorField.text())
-        print(self.workField.text())
-        print(self.bodyField.toPlainText())
+        print(self.author_field.text())
+        print(self.work_field.text())
+        print(self.body_field.toPlainText())
 
     def clear(self):
-        self.authorField.setText("")
-        self.workField.setText("")
-        self.bodyField.setText("")
+        self.author_field.setText("")
+        self.work_field.setText("")
+        self.body_field.setText("")
+
+class EditTabView:
+
+    def __init__(self, parent):
+        self.group_box = QGroupBox(parent)
+        self.group_box.resize(800, 560)
+        # TODO: list of entries
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
