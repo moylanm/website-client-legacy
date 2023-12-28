@@ -11,7 +11,7 @@ class Main(QMainWindow):
     def __init__(self, username, password, parent=None):
         super().__init__(parent)
 
-        self.net_handler = NetHandler(username, password)
+        net_handler = NetHandler(username, password)
 
         self.setWindowTitle(u"Website Client")
         self.resize(800, 600)
@@ -28,14 +28,16 @@ class Main(QMainWindow):
         self.tab_widget.setCurrentIndex(0)
 
         # Publish tab 
-        self.publish_view = PublishTabView(self.publish_tab)
+        self.publish_view = PublishTabView(net_handler, self.publish_tab)
 
         # Edit tab
-        self.edit_view = EditTabView(self.edit_tab)
+        self.edit_view = EditTabView(net_handler, self.edit_tab)
 
 class PublishTabView:
 
-    def __init__(self, parent):
+    def __init__(self, net_handler, parent):
+        self.net_handler = net_handler
+
         self.group_box = QGroupBox(parent)
         self.group_box.resize(800, 560)
         self.author_label = QLabel(self.group_box)
@@ -74,10 +76,13 @@ class PublishTabView:
 
 class EditTabView:
 
-    def __init__(self, parent):
+    def __init__(self, net_handler, parent):
+        self.net_handler = net_handler
+
         self.group_box = QGroupBox(parent)
         self.group_box.resize(800, 560)
-        # TODO: list of entries
+        for excerpt in self.net_handler.list_excerpts():
+            print(excerpt)
 
 
 if __name__ == "__main__":
