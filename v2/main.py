@@ -65,9 +65,13 @@ class PublishTabView:
         self.clear_button.clicked.connect(self.clear)
     
     def publish(self):
-        print(self.author_field.text())
-        print(self.work_field.text())
-        print(self.body_field.toPlainText())
+        res = self.net_handler.publish_excerpt(
+            self.author_field.text(),
+            self.work_field.text(),
+            self.body_field.toPlainText()
+        )
+
+        print(res)
 
     def clear(self):
         self.author_field.setText("")

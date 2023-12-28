@@ -1,5 +1,5 @@
 import requests
-
+from requests.auth import  HTTPBasicAuth
 
 class Excerpt:
 
@@ -18,18 +18,22 @@ class NetHandler:
     LIST_URL = "https://mylesmoylan.net/json/excerpts"
 
     def __init__(self, username, password):
-        self.username = username
-        self.password = password
+        self.auth = HTTPBasicAuth(username, password)
 
     def list_excerpts(self):
-        req = requests.get(self.LIST_URL, auth=(self.username, self.password))
+        req = requests.get(self.LIST_URL, auth=self.auth)
         return [Excerpt(e["id"], e["author"], e["work"], e["body"]) for e in req.json()["excerpts"]]
 
-    def publish_excerpt(self, excerpt):
-        pass
+    def publish_excerpt(self, author, work, body):
+        data = {"author": author, "work": work, "body": body}
+        req = requests.post(self.PUBLISH_URL, auth=self.auth, json=data)
+        return req.json()
 
-    def update_excerpt(self, excerpt):
-        pass
+    def update_excerpt(self, id, author, work, body):
+        data = {"id": id, "author": author, "work": work, "body": body}
+        req = requests.patch(f"{self.PUBLISH_URL}/{id}", auth=self.auth, json=data)
+        return req.json()
 
     def delete_excerpt(self, id):
-        pass
+        req = requests.delete(f"{self.PUBLISH_URL}/{id}", auth=self.auth)
+        return req.json()
