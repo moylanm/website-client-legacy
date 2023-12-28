@@ -1,13 +1,18 @@
 # -.- coding: utf-8 -.-
-import sys
+import sys, os
 
+from net_handler import NetHandler
+from dotenv import load_dotenv
 from PySide6.QtCore import QRect
 from PySide6.QtWidgets import QApplication, QGroupBox, QLabel, QLineEdit, QMainWindow, QPushButton, QTabWidget, QTextEdit, QWidget
 
-class MainWindow(QMainWindow):
+class Main(QMainWindow):
 
-    def __init__(self, parent=None):
+    def __init__(self, username, password, parent=None):
         super().__init__(parent)
+
+        self.net_handler = NetHandler(username, password)
+
         self.setWindowTitle(u"Website Client")
         self.resize(800, 600)
 
@@ -76,7 +81,10 @@ class EditTabView:
 
 
 if __name__ == "__main__":
+    load_dotenv()
+
     app = QApplication(sys.argv)
-    main = MainWindow()
+    main = Main(os.getenv("USERNAME"), os.getenv("PASSWORD"))
+
     main.show()
     sys.exit(app.exec())
