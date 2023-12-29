@@ -1,5 +1,8 @@
-import requests
+import os, requests
 from requests.auth import  HTTPBasicAuth
+from dotenv import load_dotenv
+
+load_dotenv()
 
 class Excerpt:
 
@@ -17,8 +20,8 @@ class NetHandler:
     PUBLISH_URL = "https://mylesmoylan.net/excerpts"
     LIST_URL = "https://mylesmoylan.net/json/excerpts"
 
-    def __init__(self, username, password):
-        self.auth = HTTPBasicAuth(username, password)
+    def __init__(self):
+        self.auth = HTTPBasicAuth(str(os.getenv("USERNAME")), str(os.getenv("PASSWORD")))
 
     def list_excerpts(self):
         req = requests.get(self.LIST_URL, auth=self.auth)
