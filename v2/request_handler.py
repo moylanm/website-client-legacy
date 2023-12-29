@@ -1,3 +1,4 @@
+# -.- coding: utf-8 -.-
 import os, requests
 from requests.auth import  HTTPBasicAuth
 from dotenv import load_dotenv
