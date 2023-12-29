@@ -1,7 +1,7 @@
 # -.- coding: utf-8 -.-
 import sys
 
-from net_handler import RequestHandler
+from request_handler import RequestHandler
 from PySide6.QtCore import QRect, Qt
 from PySide6.QtWidgets import (
     QApplication,
@@ -9,6 +9,7 @@ from PySide6.QtWidgets import (
     QLabel,
     QLineEdit,
     QMainWindow,
+    QMessageBox,
     QPushButton,
     QTabWidget,
     QTableWidget,
@@ -77,7 +78,9 @@ class PublishTabView:
             self.body_field.toPlainText()
         )
 
-        print(res)
+        db = dialog_box(res)
+        db.exec()
+        db.close()
 
     def clear(self):
         self.author_field.setText("")
@@ -153,14 +156,33 @@ class EditWindow(QMainWindow):
             self.body_field.toPlainText()
         )
 
-        print(res)
+        db = dialog_box(res)
+        db.exec()
+        db.close()
 
     def delete_excerpt(self):
-        # TODO: confirmation prompt
+        mb = QMessageBox()
+        mb.setInformativeText("Are you sure you want to delete this excerpt?")
+        mb.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+        ret = mb.exec()
 
-        res = REQUEST_HANDLER.delete_excerpt(self.excerpt_id)
+        if ret == QMessageBox.StandardButton.Yes:
+            mb.close()
+            self.close()
 
-        print(res)
+            res = REQUEST_HANDLER.delete_excerpt(self.excerpt_id)
+            
+            db = dialog_box(res)
+            db.exec()
+            db.close()
+        else:
+            mb.close()
+
+def dialog_box(text):
+    db = QMessageBox()
+    db.setInformativeText(text)
+    db.setStandardButtons(QMessageBox.StandardButton.Ok)
+    return db
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
