@@ -91,6 +91,7 @@ class EditTabView:
     def __init__(self, net_handler, parent):
         self.net_handler = net_handler
         self.excerpts = net_handler.list_excerpts()
+        self.edit_window = None
 
         self.table = QTableWidget(len(self.excerpts), 1, parent)
         self.table.setFocusPolicy(Qt.FocusPolicy.NoFocus)
@@ -107,8 +108,36 @@ class EditTabView:
     
     def on_clicked(self, excerpt):
         def new_window():
-            print(excerpt)
+            self.edit_window = EditWindow(excerpt)
+            self.edit_window.show()
         return new_window
+
+class EditWindow(QMainWindow):
+
+    def __init__(self, excerpt, parent=None):
+        super().__init__(parent)
+        
+        self.setWindowTitle(f"{excerpt}")
+        self.resize(800, 600)
+        
+        self.author_label = QLabel(self)
+        self.author_label.setText(u"Author :")
+        self.author_label.setGeometry(QRect(15, 10, 60, 30))
+        self.work_label = QLabel(self)
+        self.work_label.setText(u"Work :")
+        self.work_label.setGeometry(QRect(25, 50, 50, 30))
+        self.body_label = QLabel(self)
+        self.body_label.setText(u"Body :")
+        self.body_label.setGeometry(QRect(25, 88, 60, 30))
+        self.author_field = QLineEdit(self)
+        self.author_field.setGeometry(QRect(70, 10, 330, 30))
+        self.author_field.setText(f"{excerpt.author}")
+        self.work_field = QLineEdit(self)
+        self.work_field.setGeometry(QRect(70, 50, 330, 30))
+        self.work_field.setText(f"{excerpt.work}")
+        self.body_field = QTextEdit(self)
+        self.body_field.setGeometry(QRect(70, 90, 690, 370))
+        self.body_field.setText(f"{excerpt.body}")
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
