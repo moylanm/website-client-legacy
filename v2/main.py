@@ -1,7 +1,7 @@
 # -.- coding: utf-8 -.-
 import sys
 
-from net_handler import NetHandler
+from net_handler import RequestHandler
 from PySide6.QtCore import QRect, Qt
 from PySide6.QtWidgets import (
     QApplication,
@@ -16,12 +16,12 @@ from PySide6.QtWidgets import (
     QWidget
 )
 
+REQUEST_HANDLER = RequestHandler()
+
 class Main(QMainWindow):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-
-        net_handler = NetHandler()
 
         self.setWindowTitle(u"Website Client")
         self.resize(800, 600)
@@ -38,16 +38,14 @@ class Main(QMainWindow):
         self.tab_widget.setCurrentIndex(0)
 
         # Publish tab 
-        self.publish_view = PublishTabView(net_handler, self.publish_tab)
+        self.publish_view = PublishTabView(self.publish_tab)
 
         # Edit tab
-        self.edit_view = EditTabView(net_handler, self.edit_tab)
+        self.edit_view = EditTabView(self.edit_tab)
 
 class PublishTabView:
 
-    def __init__(self, net_handler, parent):
-        self.net_handler = net_handler
-
+    def __init__(self, parent):
         self.author_label = QLabel(parent)
         self.author_label.setText(u"Author :")
         self.author_label.setGeometry(QRect(15, 10, 60, 30))
@@ -73,7 +71,7 @@ class PublishTabView:
         self.clear_button.clicked.connect(self.clear)
     
     def publish(self):
-        res = self.net_handler.publish_excerpt(
+        res = REQUEST_HANDLER.publish_excerpt(
             self.author_field.text(),
             self.work_field.text(),
             self.body_field.toPlainText()
@@ -88,9 +86,8 @@ class PublishTabView:
 
 class EditTabView:
 
-    def __init__(self, net_handler, parent):
-        self.net_handler = net_handler
-        self.excerpts = net_handler.list_excerpts()
+    def __init__(self, parent):
+        self.excerpts = REQUEST_HANDLER.list_excerpts()
         self.edit_window = None
 
         self.table = QTableWidget(len(self.excerpts), 1, parent)
@@ -116,6 +113,7 @@ class EditWindow(QMainWindow):
 
     def __init__(self, excerpt, parent=None):
         super().__init__(parent)
+        self.excerpt_id = excerpt.id
         
         self.setWindowTitle(f"{excerpt}")
         self.resize(800, 600)
@@ -138,6 +136,31 @@ class EditWindow(QMainWindow):
         self.body_field = QTextEdit(self)
         self.body_field.setGeometry(QRect(70, 90, 690, 370))
         self.body_field.setText(f"{excerpt.body}")
+        self.publish_button = QPushButton(self)
+        self.publish_button.setText(u"Update")
+        self.publish_button.setGeometry(QRect(640, 465, 120, 40))
+        self.publish_button.clicked.connect(self.update_excerpt)
+        self.clear_button = QPushButton(self)
+        self.clear_button.setText(u"Delete")
+        self.clear_button.setGeometry(QRect(510, 465, 120, 40))
+        self.clear_button.clicked.connect(self.delete_excerpt)
+
+    def update_excerpt(self):
+        res = REQUEST_HANDLER.update_excerpt(
+            self.excerpt_id,
+            self.author_field.text(),
+            self.work_field.text(),
+            self.body_field.toPlainText()
+        )
+
+        print(res)
+
+    def delete_excerpt(self):
+        # TODO: confirmation prompt
+
+        res = REQUEST_HANDLER.delete_excerpt(self.excerpt_id)
+
+        print(res)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

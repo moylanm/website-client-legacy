@@ -15,7 +15,7 @@ class Excerpt:
     def __str__(self):
         return f"{self.author} - {self.work}"
 
-class NetHandler:
+class RequestHandler:
 
     PUBLISH_URL = "https://mylesmoylan.net/excerpts"
     LIST_URL = "https://mylesmoylan.net/json/excerpts"
