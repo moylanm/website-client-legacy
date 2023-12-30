@@ -3,7 +3,7 @@ import sys
 
 from request_handler import RequestHandler
 from helpers import dialog_box
-from PySide6.QtCore import QRect, Qt
+from PySide6.QtCore import QRect, Qt, Signal
 from PySide6.QtWidgets import (
     QApplication,
     QHeaderView,
@@ -28,6 +28,9 @@ class Main(QMainWindow):
         self.setWindowTitle(u"Website Client")
         self.resize(800, 600)
 
+        self.excerpts = []
+        self.edit_window = None
+
         # Tabs
         self.tab_widget = QTabWidget(self)
         self.tab_widget.setGeometry(QRect(0, 0, 800, 590))
@@ -40,38 +43,33 @@ class Main(QMainWindow):
         self.tab_widget.setCurrentIndex(0)
 
         # Publish tab 
-        self.publish_view = PublishTabView(self.publish_tab)
-
-        # Edit tab
-        self.edit_view = EditTabView(self.edit_tab)
-
-class PublishTabView:
-
-    def __init__(self, parent):
-        self.author_label = QLabel(parent)
+        self.author_label = QLabel(self.publish_tab)
         self.author_label.setText(u"Author :")
         self.author_label.setGeometry(QRect(15, 10, 60, 30))
-        self.work_label = QLabel(parent)
+        self.work_label = QLabel(self.publish_tab)
         self.work_label.setText(u"Work :")
         self.work_label.setGeometry(QRect(25, 50, 50, 30))
-        self.body_label = QLabel(parent)
+        self.body_label = QLabel(self.publish_tab)
         self.body_label.setText(u"Body :")
         self.body_label.setGeometry(QRect(25, 88, 60, 30))
-        self.author_field = QLineEdit(parent)
+        self.author_field = QLineEdit(self.publish_tab)
         self.author_field.setGeometry(QRect(70, 10, 330, 30))
-        self.work_field = QLineEdit(parent)
+        self.work_field = QLineEdit(self.publish_tab)
         self.work_field.setGeometry(QRect(70, 50, 330, 30))
-        self.body_field = QTextEdit(parent)
+        self.body_field = QTextEdit(self.publish_tab)
         self.body_field.setGeometry(QRect(70, 90, 690, 370))
-        self.publish_button = QPushButton(parent)
+        self.publish_button = QPushButton(self.publish_tab)
         self.publish_button.setText(u"Publish")
         self.publish_button.setGeometry(QRect(640, 465, 120, 40))
         self.publish_button.clicked.connect(self.publish)
-        self.clear_button = QPushButton(parent)
+        self.clear_button = QPushButton(self.publish_tab)
         self.clear_button.setText(u"Clear")
         self.clear_button.setGeometry(QRect(510, 465, 120, 40))
         self.clear_button.clicked.connect(self.clear)
-    
+
+        # Edit tab
+        self.load_excerpts()
+
     def publish(self):
         res = REQUEST_HANDLER.publish_excerpt(
             self.author_field.text(),
@@ -83,18 +81,17 @@ class PublishTabView:
         db.exec()
         db.close()
 
+        self.load_excerpts()
+
     def clear(self):
         self.author_field.setText("")
         self.work_field.setText("")
         self.body_field.setText("")
 
-class EditTabView:
-
-    def __init__(self, parent):
+    def load_excerpts(self):
         self.excerpts = REQUEST_HANDLER.list_excerpts()
-        self.edit_window = None
 
-        self.table = QTableWidget(len(self.excerpts), 1, parent)
+        self.table = QTableWidget(len(self.excerpts), 1, self.edit_tab)
         self.table.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
         self.table.horizontalHeader().hide()
@@ -106,14 +103,19 @@ class EditTabView:
             button.setFocusPolicy(Qt.FocusPolicy.NoFocus)
             button.clicked.connect(self.on_clicked(excerpt))
             self.table.setCellWidget(row, 0, button)
-    
+
+        self.table.show()
+
     def on_clicked(self, excerpt):
-        def new_window():
-            self.edit_window = EditWindow(excerpt)
+        def new_edit_window():
+            self.edit_window = EditWindow(excerpt, parent=self)
+            self.edit_window.edit_event.connect(self.load_excerpts)
             self.edit_window.show()
-        return new_window
+        return new_edit_window
 
 class EditWindow(QMainWindow):
+
+    edit_event = Signal()
 
     def __init__(self, excerpt, parent=None):
         super().__init__(parent)
@@ -159,6 +161,8 @@ class EditWindow(QMainWindow):
 
         db = dialog_box(res)
         db.exec()
+        self.edit_event.emit()
+
         db.close()
         self.close()
 
@@ -176,6 +180,8 @@ class EditWindow(QMainWindow):
             
             db = dialog_box(res)
             db.exec()
+            self.edit_event.emit()
+
             db.close()
         else:
             mb.close()
