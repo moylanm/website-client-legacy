@@ -2,6 +2,7 @@
 import sys
 
 from request_handler import RequestHandler
+from helpers import dialog_box
 from PySide6.QtCore import QRect, Qt
 from PySide6.QtWidgets import (
     QApplication,
@@ -159,6 +160,7 @@ class EditWindow(QMainWindow):
         db = dialog_box(res)
         db.exec()
         db.close()
+        self.close()
 
     def delete_excerpt(self):
         mb = QMessageBox()
@@ -177,12 +179,6 @@ class EditWindow(QMainWindow):
             db.close()
         else:
             mb.close()
-
-def dialog_box(text):
-    db = QMessageBox()
-    db.setInformativeText(text)
-    db.setStandardButtons(QMessageBox.StandardButton.Ok)
-    return db
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
