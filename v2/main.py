@@ -2,7 +2,7 @@
 import sys
 
 from request_handler import RequestHandler
-from helpers import dialog_box
+from helpers import dialog_box, parse_response
 from PySide6.QtCore import QRect, Qt, Signal
 from PySide6.QtWidgets import (
     QApplication,
@@ -19,6 +19,12 @@ from PySide6.QtWidgets import (
 )
 
 REQUEST_HANDLER = RequestHandler()
+
+SUCCESS_RESPONSE = {
+    "publish": "excerpt successfully created",
+    "update": "excerpt successfully updated",
+    "delete": "excerpt successfully deleted"
+}
 
 class Main(QMainWindow):
 
@@ -71,18 +77,22 @@ class Main(QMainWindow):
         self.load_excerpts()
 
     def publish(self):
-        res = REQUEST_HANDLER.publish_excerpt(
+        response = REQUEST_HANDLER.publish_excerpt(
             self.author_field.text(),
             self.work_field.text(),
             self.body_field.toPlainText()
         )
 
-        db = dialog_box(res)
-        db.exec()
-        db.close()
-        self.clear()
+        message = parse_response(response)
 
-        self.load_excerpts()
+        db = dialog_box(message)
+        db.exec()
+
+        if message == SUCCESS_RESPONSE["publish"]:
+            self.clear()
+            self.load_excerpts()
+
+        db.close()
 
     def clear(self):
         self.author_field.setText("")
@@ -153,19 +163,23 @@ class EditWindow(QMainWindow):
         self.delete_button.clicked.connect(self.delete_excerpt)
 
     def update_excerpt(self):
-        res = REQUEST_HANDLER.update_excerpt(
+        response = REQUEST_HANDLER.update_excerpt(
             self.excerpt_id,
             self.author_field.text(),
             self.work_field.text(),
             self.body_field.toPlainText()
         )
 
-        db = dialog_box(res)
+        message = parse_response(response)
+
+        db = dialog_box(message)
         db.exec()
-        self.edit_event.emit()
+
+        if message == SUCCESS_RESPONSE["update"]:
+            self.edit_event.emit()
+            self.close()
 
         db.close()
-        self.close()
 
     def delete_excerpt(self):
         mb = QMessageBox()
@@ -175,13 +189,17 @@ class EditWindow(QMainWindow):
 
         if ret == QMessageBox.StandardButton.Yes:
             mb.close()
-            self.close()
 
-            res = REQUEST_HANDLER.delete_excerpt(self.excerpt_id)
+            response = REQUEST_HANDLER.delete_excerpt(self.excerpt_id)
             
-            db = dialog_box(res)
+            message = parse_response(response)
+
+            db = dialog_box(message)
             db.exec()
-            self.edit_event.emit()
+            
+            if message == SUCCESS_RESPONSE["delete"]:
+                self.edit_event.emit()
+                self.close()
 
             db.close()
         else:

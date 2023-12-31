@@ -10,6 +10,6 @@ def parse_response(res):
 
 def dialog_box(text):
     db = QMessageBox()
-    db.setInformativeText(parse_response(str(text)))
+    db.setInformativeText(text)
     db.setStandardButtons(QMessageBox.StandardButton.Ok)
     return db
