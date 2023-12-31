@@ -143,14 +143,14 @@ class EditWindow(QMainWindow):
         self.body_field = QTextEdit(self)
         self.body_field.setGeometry(QRect(70, 90, 690, 370))
         self.body_field.setText(f"{excerpt.body}")
-        self.publish_button = QPushButton(self)
-        self.publish_button.setText(u"Update")
-        self.publish_button.setGeometry(QRect(640, 465, 120, 40))
-        self.publish_button.clicked.connect(self.update_excerpt)
-        self.clear_button = QPushButton(self)
-        self.clear_button.setText(u"Delete")
-        self.clear_button.setGeometry(QRect(510, 465, 120, 40))
-        self.clear_button.clicked.connect(self.delete_excerpt)
+        self.update_button = QPushButton(self)
+        self.update_button.setText(u"Update")
+        self.update_button.setGeometry(QRect(640, 465, 120, 40))
+        self.update_button.clicked.connect(self.update_excerpt)
+        self.delete_button = QPushButton(self)
+        self.delete_button.setText(u"Delete")
+        self.delete_button.setGeometry(QRect(510, 465, 120, 40))
+        self.delete_button.clicked.connect(self.delete_excerpt)
 
     def update_excerpt(self):
         res = REQUEST_HANDLER.update_excerpt(
