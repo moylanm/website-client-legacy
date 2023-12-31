@@ -80,6 +80,7 @@ class Main(QMainWindow):
         db = dialog_box(res)
         db.exec()
         db.close()
+        self.clear()
 
         self.load_excerpts()
 
