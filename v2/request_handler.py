@@ -1,6 +1,6 @@
 # -.- coding: utf-8 -.-
 import os, requests
-from requests.auth import  HTTPBasicAuth
+from requests.auth import HTTPBasicAuth
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -25,19 +25,19 @@ class RequestHandler:
         self.auth = HTTPBasicAuth(str(os.getenv("USERNAME")), str(os.getenv("PASSWORD")))
 
     def list_excerpts(self):
-        req = requests.get(self.LIST_URL, auth=self.auth)
-        return [Excerpt(e["id"], e["author"], e["work"], e["body"]) for e in req.json()["excerpts"]]
+        res = requests.get(self.LIST_URL, auth=self.auth)
+        return [Excerpt(e["id"], e["author"], e["work"], e["body"]) for e in res.json()["excerpts"]]
 
     def publish_excerpt(self, author, work, body):
         data = {"author": author, "work": work, "body": body}
-        req = requests.post(self.PUBLISH_URL, auth=self.auth, json=data)
-        return req.json()
+        res = requests.post(self.PUBLISH_URL, auth=self.auth, json=data)
+        return res.json()
 
     def update_excerpt(self, id, author, work, body):
         data = {"id": id, "author": author, "work": work, "body": body}
-        req = requests.patch(f"{self.PUBLISH_URL}/{id}", auth=self.auth, json=data)
-        return req.json()
+        res = requests.patch(f"{self.PUBLISH_URL}/{id}", auth=self.auth, json=data)
+        return res.json()
 
     def delete_excerpt(self, id):
-        req = requests.delete(f"{self.PUBLISH_URL}/{id}", auth=self.auth)
-        return req.json()
+        res = requests.delete(f"{self.PUBLISH_URL}/{id}", auth=self.auth)
+        return res.json()
