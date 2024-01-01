@@ -5,7 +5,7 @@ from PySide6.QtWidgets import QMessageBox
 MESSAGE_RX = re.compile(r"'([\w\s]*)'\s*:\s*'([\w\s]*)'")
 
 def parse_response(res):
-    m = re.search(MESSAGE_RX, res)
+    m = re.search(MESSAGE_RX, str(res))
     return m[2] if m is not None else "could not parse response"
 
 def dialog_box(text):
