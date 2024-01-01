@@ -31,13 +31,13 @@ class RequestHandler:
     def publish_excerpt(self, author, work, body):
         data = {"author": author, "work": work, "body": body}
         res = requests.post(self.PUBLISH_URL, auth=self.auth, json=data)
-        return res.json()
+        return str(res.json())
 
     def update_excerpt(self, id, author, work, body):
         data = {"id": id, "author": author, "work": work, "body": body}
         res = requests.patch(f"{self.PUBLISH_URL}/{id}", auth=self.auth, json=data)
-        return res.json()
+        return str(res.json())
 
     def delete_excerpt(self, id):
         res = requests.delete(f"{self.PUBLISH_URL}/{id}", auth=self.auth)
-        return res.json()
+        return str(res.json())
