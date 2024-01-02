@@ -9,7 +9,7 @@ load_dotenv()
 
 class RequestAPI:
     BASE_URL = "https://mylesmoylan.net/excerpts"
-    LIST_URL = "https://mylesmoylan.net/json/excerpts"
+    LIST_URL = f"{BASE_URL}/json"
 
     def __init__(self) -> None:
         self.auth = HTTPBasicAuth(os.getenv("USERNAME"), os.getenv("PASSWORD"))
@@ -24,7 +24,7 @@ class RequestAPI:
         return [Excerpt(e["id"], e["author"], e["work"], e["body"]) for e in excerpts]
 
     def _publish_or_update_excerpt(self, method, id=None, author="", work="", body=""):
-        url = self.LIST_URL if method == "POST" else f"{self.BASE_URL}/{id}"
+        url = self.BASE_URL if method == "POST" else f"{self.BASE_URL}/{id}"
         data = {"author": author, "work": work, "body": body}
         return self._make_request(method, url, json=data)
 
