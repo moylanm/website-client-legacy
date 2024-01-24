@@ -75,7 +75,7 @@ class Main(QMainWindow):
         self.clear_button = QPushButton(self.publish_tab)
         self.clear_button.setText("Clear")
         self.clear_button.setGeometry(510, 465, 120, 40)
-        self.clear_button.clicked.connect(self.clear)
+        self.clear_button.clicked.connect(self.clear_form)
 
     def create_edit_tab(self):
         self.load_excerpts()
@@ -93,18 +93,23 @@ class Main(QMainWindow):
         db.exec()
 
         if message == SUCCESS_RESPONSE["publish"]:
-            self.clear()
+            self.clear_form()
             self.load_excerpts()
 
         db.close()
 
-    def clear(self):
+    def clear_form(self):
         for field in ["author", "work", "body"]:
-            getattr(self, f"{field}_field").setText("")
+            getattr(self, f"{field}_field").clear()
 
     def load_excerpts(self):
         self.excerpts = API.list_excerpts()
 
+        try:
+            self.table.clear()
+        except AttributeError:
+            pass
+        
         self.table = QTableWidget(len(self.excerpts), 1, self.edit_tab)
         self.table.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
