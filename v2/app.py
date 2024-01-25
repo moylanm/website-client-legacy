@@ -26,21 +26,41 @@ SUCCESS_RESPONSE = {
     "delete": "excerpt successfully deleted"
 }
 
-class Main(QMainWindow):
+FORM_METADATA = [
+    {"label": "Author :", "label_geometry": QRect(15, 10, 60, 30), "field_type": QLineEdit, "field_geometry": QRect(70, 10, 690, 30), "field_name": "author_field", "attr": "author"},
+    {"label": "Work :", "label_geometry": QRect(25, 50, 60, 30), "field_type": QLineEdit, "field_geometry": QRect(70, 50, 690, 30), "field_name": "work_field", "attr": "work"},
+    {"label": "Body :", "label_geometry": QRect(25, 88, 60, 30), "field_type": QTextEdit, "field_geometry": QRect(70, 88, 690, 370), "field_name": "body_field", "attr": "body"}
+]
+
+def create_form_fields(parent, excerpt=None):
+    for el in FORM_METADATA:
+        label = QLabel(el["label"], parent)
+        label.setGeometry(el["label_geometry"])
+
+        field = el["field_type"](parent)
+        field.setGeometry(el["field_geometry"])
+
+        if excerpt is not None:
+            field.setText(getattr(excerpt, el["attr"], ""))
+
+        setattr(parent, el["field_name"], field)
+
+class MainUI(QMainWindow):
 
     def __init__(self, parent=None):
-        super().__init__(parent)
+        super(MainUI, self).__init__(parent)
+        self.excerpts = []
+        self.setup_window()
+        self.init_ui()
+
+    def setup_window(self):
         self.setWindowTitle("Website Client")
         self.resize(800, 600)
-        self.excerpts = []
-        self.edit_window = None
-        self.init_ui()
 
     def init_ui(self):
         self.create_tabs()
-        self.create_publish_tab()
-        self.create_edit_tab()
-        self.load_excerpts()
+        self.setup_publish_tab()
+        self.setup_edit_tab()
 
     def create_tabs(self):
         self.tab_widget = QTabWidget(self)
@@ -53,34 +73,24 @@ class Main(QMainWindow):
         self.tab_widget.setTabText(1, "Edit")
         self.tab_widget.setCurrentIndex(0)
 
-    def create_publish_tab(self):
-        labels = ["Author :", "Work :", "Body :"]
-        fields = [QLineEdit, QLineEdit, QTextEdit]
-        positions = [(15, 10), (25, 50), (25, 88)]
+    def setup_publish_tab(self):
+        create_form_fields(self.publish_tab)
 
-        for label, field, pos in zip(labels, fields, positions):
-            name = label.lower().replace(' :', '')
-            setattr(self, f"{name}_label", QLabel(self.publish_tab))
-            getattr(self, f"{name}_label").setText(label)
-            getattr(self, f"{name}_label").setGeometry(pos[0], pos[1], 60, 30)
+        publish_button = QPushButton(self.publish_tab)
+        publish_button.setText("Publish")
+        publish_button.setGeometry(QRect(640, 465, 120, 40))
+        publish_button.clicked.connect(self.publish_excerpt)
 
-            setattr(self, f"{name}_field", field(self.publish_tab))
-            getattr(self, f"{name}_field").setGeometry(70, pos[1], 690, 30 if field == QLineEdit else 370)
+        clear_button = QPushButton(self.publish_tab)
+        clear_button.setText("Clear")
+        clear_button.setGeometry(510, 465, 120, 40)
+        clear_button.clicked.connect(self.clear_form)
 
-        self.publish_button = QPushButton(self.publish_tab)
-        self.publish_button.setText("Publish")
-        self.publish_button.setGeometry(QRect(640, 465, 120, 40))
-        self.publish_button.clicked.connect(self.publish)
-
-        self.clear_button = QPushButton(self.publish_tab)
-        self.clear_button.setText("Clear")
-        self.clear_button.setGeometry(510, 465, 120, 40)
-        self.clear_button.clicked.connect(self.clear_form)
-
-    def create_edit_tab(self):
+    def setup_edit_tab(self):
+        self.edit_window = None
         self.load_excerpts()
 
-    def publish(self):
+    def publish_excerpt(self):
         response = API.publish_excerpt(
             self.author_field.text(),
             self.work_field.text(),
@@ -103,12 +113,12 @@ class Main(QMainWindow):
             getattr(self, f"{field}_field").clear()
 
     def load_excerpts(self):
-        self.excerpts = API.list_excerpts()
-
         try:
             self.table.clear()
         except AttributeError:
             pass
+
+        self.excerpts = API.list_excerpts()
         
         self.table = QTableWidget(len(self.excerpts), 1, self.edit_tab)
         self.table.setFocusPolicy(Qt.FocusPolicy.NoFocus)
@@ -138,73 +148,47 @@ class EditWindow(QMainWindow):
     edit_event = Signal()
 
     def __init__(self, excerpt, parent=None):
-        super().__init__(parent)
-        self.excerpt_id = excerpt.id
-        self.setWindowTitle(str(excerpt))
+        super(EditWindow, self).__init__(parent)
+        self.excerpt = excerpt
+        self.setup_window()
+        self.init_ui()
+    
+    def setup_window(self):
+        self.setWindowTitle(str(self.excerpt))
         self.resize(800, 600)
-        self.init_ut(excerpt)
 
-    def init_ut(self, excerpt):
-        self.create_labels()
-        self.create_fields(excerpt)
-        self.create_buttons()
+    def init_ui(self):
+        create_form_fields(self, self.excerpt)
 
-    def create_labels(self):
-        labels_data = [
-            ("Author :", 15, 10),
-            ("Work :", 25, 50),
-            ("Body :", 25, 88),
-        ]
+        update_button = QPushButton(self)
+        update_button.setText("Update")
+        update_button.setGeometry(QRect(640, 465, 120, 40))
+        update_button.clicked.connect(self.update_excerpt)
 
-        for label_text, x, y in labels_data:
-            label = QLabel(self)
-            label.setText(label_text)
-            label.setGeometry(QRect(x, y, 60, 30))
-
-    def create_fields(self, excerpt):
-        fields_data = [
-            (QLineEdit, excerpt.author, 70, 10),
-            (QLineEdit, excerpt.work, 70, 50),
-            (QTextEdit, excerpt.body, 70, 90),
-        ]
-
-        for field_type, field_value, x, y in fields_data:
-            field = field_type(self)
-            field.setGeometry(QRect(x, y, 690, 30 if field_type == QLineEdit else 370))
-            field.setText(str(field_value))
-            setattr(self, f"{field_type.__name__.lower()}_{y}", field)
-
-    def create_buttons(self):
-        buttons_data = [
-            ("Update", self.update_excerpt, 640, 465),
-            ("Delete", self.delete_excerpt, 510, 465),
-        ]
-
-        for button_text, handler, x, y in buttons_data:
-            button = QPushButton(self)
-            button.setText(button_text)
-            button.setGeometry(QRect(x, y, 120, 40))
-            button.clicked.connect(handler)
+        delete_button = QPushButton(self)
+        delete_button.setText("Delete")
+        delete_button.setGeometry(510, 465, 120, 40)
+        delete_button.clicked.connect(self.delete_excerpt)
 
     def update_excerpt(self):
         response = API.update_excerpt(
-            self.excerpt_id,
-            self.get_field_text(QLineEdit, 10),
-            self.get_field_text(QLineEdit, 50),
-            self.get_field_text(QTextEdit, 90)
+            self.excerpt.id,
+            self.author_field.text(),
+            self.work_field.text(),
+            self.body_field.toPlainText()
         )
 
         self.handle_response(response, "update")
 
     def delete_excerpt(self):
         mb = QMessageBox()
-        mb.setInformativeText("Are you sure you want to delte this excerpt?")
+        mb.setInformativeText("Are you sure you want to delete this excerpt?")
         mb.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
         ret = mb.exec()
 
         if ret == QMessageBox.StandardButton.Yes:
             mb.close()
-            response = API.delete_excerpt(self.excerpt_id)
+            response = API.delete_excerpt(self.excerpt.id)
             self.handle_response(response, "delete")
         else:
             mb.close()
@@ -220,13 +204,8 @@ class EditWindow(QMainWindow):
 
         db.close()
 
-    def get_field_text(self, field_type, y):
-        field = getattr(self, f"{field_type.__name__.lower()}_{y}")
-        return field.text() if field_type == QLineEdit else field.toPlainText()
-
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    main = Main()
-
+    main = MainUI()
     main.show()
     sys.exit(app.exec())

@@ -2,11 +2,14 @@
 import re
 from PySide6.QtWidgets import QMessageBox
 
-MESSAGE_RX = re.compile(r"'([\w\s]*)'\s*:\s*'([\w\s]*)'")
+MESSAGE_RX = re.compile(r"'([^']*)'\s*:\s*'([^']*)'")
 
 def parse_response(res: str) -> str:
-    m = re.search(MESSAGE_RX, res)
-    return m[2] if m is not None else "could not parse response"
+    try:
+        m = MESSAGE_RX.search(res)
+        return m.group(2) if m else "could not parse response"
+    except Exception as e:
+        return f"Error parsing response: {e}"
 
 def dialog_box(text: str) -> QMessageBox:
     db = QMessageBox()

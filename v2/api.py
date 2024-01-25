@@ -29,7 +29,7 @@ class RequestAPI:
     def _make_request(self, method: HTTPMethod, url: str, use_auth: bool = True, **kwargs) -> dict:
         auth = self.auth if use_auth else None
         try:
-            response = requests.request(method.name, url, auth = auth, **kwargs)
+            response = requests.request(method.name, url, auth=auth, **kwargs)
             response.raise_for_status()
             return response.json()
         except requests.exceptions.HTTPError as e:
