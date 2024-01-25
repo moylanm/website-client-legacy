@@ -92,9 +92,9 @@ class MainUI(QMainWindow):
 
     def publish_excerpt(self):
         response = API.publish_excerpt(
-            self.author_field.text(),
-            self.work_field.text(),
-            self.body_field.toPlainText()
+            self.publish_tab.author_field.text(),
+            self.publish_tab.work_field.text(),
+            self.publish_tab.body_field.toPlainText()
         )
 
         message = parse_response(response)
@@ -109,8 +109,9 @@ class MainUI(QMainWindow):
         db.close()
 
     def clear_form(self):
-        for field in ["author", "work", "body"]:
-            getattr(self, f"{field}_field").clear()
+        self.publish_tab.author_field.clear()
+        self.publish_tab.work_field.clear()
+        self.publish_tab.body_field.clear()
 
     def load_excerpts(self):
         try:
