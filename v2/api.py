@@ -2,7 +2,7 @@
 import os
 from enum import Enum, auto
 import requests
-from excerpts import Excerpt
+from excerpt import Excerpt
 from requests.auth import HTTPBasicAuth
 from dotenv import load_dotenv
 from typing import List, Optional
