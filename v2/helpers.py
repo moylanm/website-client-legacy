@@ -1,7 +1,7 @@
 # -.- coding: utf-8 -.-
 from PySide6.QtWidgets import QMessageBox
 
-def parse_response_dataponse(response_data: dict) -> str:
+def parse_response(response_data: dict) -> str:
     try:
         if "message" in response_data:
             return response_data["message"]
