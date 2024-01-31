@@ -1,5 +1,5 @@
 # -.- coding: utf-8 -.-
-import sys
+import sys, math
 
 from api import RequestAPI
 from helpers import dialog_box, parse_response
@@ -157,6 +157,15 @@ class EditWindow(QMainWindow):
     def setup_window(self):
         self.setWindowTitle(str(self.excerpt))
         self.resize(800, 600)
+
+        screen = QApplication.primaryScreen().geometry()
+        screen_width = screen.width()
+        screen_height = screen.height()
+
+        x = math.floor((screen_width - self.width()) // 1.5)
+        y = math.floor((screen_height - self.height()) // 1.5)
+        
+        self.move(x, y)
 
     def init_ui(self):
         create_form_fields(self, self.excerpt)
