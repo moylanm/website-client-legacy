@@ -41,20 +41,20 @@ class RequestAPI:
         excerpts_data = self._make_request(HTTPMethod.GET, self.LIST_URL, use_auth=False)
         return [Excerpt(e["id"], e["author"], e["work"], e["body"]) for e in excerpts_data.get("excerpts", [])]
 
-    def _publish_or_update_excerpt(self, method: HTTPMethod, id: Optional[str] = None, author: str = "", work: str = "", body: str = "") -> str:
+    def _publish_or_update_excerpt(self, method: HTTPMethod, id: Optional[str] = None, author: str = "", work: str = "", body: str = "") -> dict:
         """Helper function to either publish a new excerpt or update an existing one."""
         url = self.BASE_URL if method == HTTPMethod.POST else f"{self.BASE_URL}/{id}"
         data = {"author": author, "work": work, "body": body}
-        return str(self._make_request(method, url, json=data))
+        return self._make_request(method, url, json=data)
 
-    def publish_excerpt(self, author: str, work: str, body: str) -> str:
+    def publish_excerpt(self, author: str, work: str, body: str) -> dict:
         """Publish a new excerpt."""
         return self._publish_or_update_excerpt(HTTPMethod.POST, author=author, work=work, body=body)
 
-    def update_excerpt(self, id: str, author: str, work: str, body: str) -> str:
+    def update_excerpt(self, id: str, author: str, work: str, body: str) -> dict:
         """Update an existing excerpt."""
         return self._publish_or_update_excerpt(HTTPMethod.PATCH, id=id, author=author, work=work, body=body)
 
-    def delete_excerpt(self, id: str) -> str:
+    def delete_excerpt(self, id: str) -> dict:
         """Delete an existing excerpt."""
-        return str(self._make_request(HTTPMethod.DELETE, f"{self.BASE_URL}/{id}"))
+        return self._make_request(HTTPMethod.DELETE, f"{self.BASE_URL}/{id}")
