@@ -1,4 +1,5 @@
 from api import RequestAPI
+from excerpt import Excerpt
 
 class ExcerptManager:
     def __init__(self,):
@@ -36,4 +37,5 @@ class ExcerptManager:
         return self._process_response(response)
 
     def list_excerpts(self):
-        return self.api.list_excerpts()
+        response = self.api.list_excerpts()
+        return [Excerpt(e["id"], e["author"], e["work"], e["body"]) for e in response["data"].get("excerpts", [])]

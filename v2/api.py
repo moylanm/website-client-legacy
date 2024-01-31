@@ -1,11 +1,10 @@
 # -.- coding: utf-8 -.-
 import os
 import requests
-from excerpt import Excerpt
 from requests.auth import HTTPBasicAuth
 from requests.exceptions import JSONDecodeError, RequestException
 from dotenv import load_dotenv
-from typing import List, Optional
+from typing import Optional
 
 load_dotenv()
 
@@ -41,10 +40,9 @@ class RequestAPI:
         except RequestException as e:
             raise ConnectionErrorException() from e
 
-    def list_excerpts(self) -> List[Excerpt]:
+    def list_excerpts(self) -> dict:
         """Retrieve a list of excerpts from the API."""
-        excerpts_data = self._make_request("GET", self.LIST_URL, use_auth=False)
-        return [Excerpt(e["id"], e["author"], e["work"], e["body"]) for e in excerpts_data["data"].get("excerpts", [])]
+        return self._make_request("GET", self.LIST_URL, use_auth=False)
 
     def _publish_or_update_excerpt(self, method: str, id: Optional[str] = None, author: str = "", work: str = "", body: str = "") -> dict:
         """Helper function to either publish a new excerpt or update an existing one."""
