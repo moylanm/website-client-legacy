@@ -1,15 +1,26 @@
 # -.- coding: utf-8 -.-
-import re
+import json
 from PySide6.QtWidgets import QMessageBox
-
-MESSAGE_RX = re.compile(r"'([^']*)'\s*:\s*'([^']*)'")
 
 def parse_response(res: str) -> str:
     try:
-        m = MESSAGE_RX.search(res)
-        return m.group(2) if m else "could not parse response"
-    except Exception as e:
+        res = res.replace("\'", "\"")
+        data = json.loads(res)
+
+        if "message" in data:
+            return data["message"]
+        elif "error" in data:
+            return data["error"]
+        elif "errors" in data:
+            errors = data["errors"]
+            return "\n".join([f"{field}: {error}" for field, error in errors.items()])
+        else:
+            return "Unknown response format"
+
+    except json.JSONDecodeError as e:
         return f"Error parsing response: {e}"
+    except Exception as e:
+        return f"General error: {e}"
 
 def dialog_box(text: str) -> QMessageBox:
     db = QMessageBox()

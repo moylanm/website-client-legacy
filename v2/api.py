@@ -30,7 +30,6 @@ class RequestAPI:
         auth = self.auth if use_auth else None
         try:
             response = requests.request(method.name, url, auth=auth, **kwargs)
-            response.raise_for_status()
             return response.json()
         except requests.exceptions.HTTPError as e:
             raise Exception(f"HTTP Error: {e.response.status_code} - {e.response.reason}") from e
