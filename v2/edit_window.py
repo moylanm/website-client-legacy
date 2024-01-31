@@ -2,7 +2,7 @@ import math
 
 from excerpt import Excerpt
 from excerpt_manager import ExcerptManager
-from helpers import SUCCESS_RESPONSE, create_form_fields, dialog_box
+from helpers import create_form_fields, dialog_box
 from PySide6.QtCore import Signal, QRect
 from PySide6.QtWidgets import QApplication, QMainWindow, QPushButton, QMessageBox
 
@@ -49,9 +49,9 @@ class EditWindow(QMainWindow):
         work = self.work_field.text()
         body = self.body_field.toPlainText()
 
-        message = self.excerpt_manager.update_excerpt(self.excerpt.id, author, work, body)
+        response = self.excerpt_manager.update_excerpt(self.excerpt.id, author, work, body)
 
-        self.handle_response_message(message, "update")
+        self.handle_response(response)
 
     def delete_excerpt(self):
         mb = QMessageBox()
@@ -61,16 +61,16 @@ class EditWindow(QMainWindow):
 
         if ret == QMessageBox.StandardButton.Yes:
             mb.close()
-            message = self.excerpt_manager.delete_excerpt(self.excerpt.id)
-            self.handle_response_message(message, "delete")
+            response = self.excerpt_manager.delete_excerpt(self.excerpt.id)
+            self.handle_response(response)
         else:
             mb.close()
 
-    def handle_response_message(self, message, action):
-        db = dialog_box(message)
+    def handle_response(self, response):
+        db = dialog_box(response["message"])
         db.exec()
 
-        if message == SUCCESS_RESPONSE[action]:
+        if response["success"]:
             self.edit_event.emit()
             self.close()
 

@@ -1,18 +1,15 @@
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QRect
 from edit_window import EditWindow
-from api import RequestAPI
 from excerpt_manager import ExcerptManager
-from helpers import SUCCESS_RESPONSE, QRect, create_form_fields, dialog_box
+from helpers import create_form_fields, dialog_box
 from PySide6.QtWidgets import QHeaderView, QMainWindow, QPushButton, QTabWidget, QTableWidget, QWidget
-
-API = RequestAPI()
 
 class MainUI(QMainWindow):
 
     def __init__(self, parent=None):
         super(MainUI, self).__init__(parent)
         self.excerpts = []
-        self.excerpt_manager = ExcerptManager(API)
+        self.excerpt_manager = ExcerptManager()
         self.setup_window()
         self.init_ui()
 
@@ -58,12 +55,12 @@ class MainUI(QMainWindow):
         work = self.publish_tab.work_field.text()
         body = self.publish_tab.body_field.toPlainText()
 
-        message = self.excerpt_manager.publish_excerpt(author, work, body)
+        response = self.excerpt_manager.publish_excerpt(author, work, body)
 
-        db = dialog_box(message)
+        db = dialog_box(response["message"])
         db.exec()
 
-        if message == SUCCESS_RESPONSE["publish"]:
+        if response["success"]:
             self.clear_form()
             self.load_excerpts()
 
