@@ -22,15 +22,13 @@ class EditWindow(QMainWindow):
     def setup_window(self):
         self.setWindowTitle(str(self.excerpt))
         self.resize(800, 600)
-        self.center_window()
+        self.move_window()
 
-    def center_window(self):
+    def move_window(self):
         screen = QApplication.primaryScreen().geometry()
-        screen_width = screen.width()
-        screen_height = screen.height()
 
-        x = math.floor((screen_width - self.width()) // 1.5)
-        y = math.floor((screen_height - self.height()) // 1.5)
+        x = math.floor((screen.width() - self.width()) // 1.5)
+        y = math.floor((screen.height() - self.height()) // 1.5)
         
         self.move(x, y)
 
@@ -50,7 +48,6 @@ class EditWindow(QMainWindow):
         body = self.body_field.toPlainText()
 
         response = self.excerpt_manager.update_excerpt(self.excerpt.id, author, work, body)
-
         self.handle_response(response)
 
     def delete_excerpt(self):
