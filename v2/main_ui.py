@@ -1,3 +1,4 @@
+# -.- coding: utf-8 -.-
 from PySide6.QtCore import Qt, QRect
 from edit_window import EditWindow
 from excerpt_manager import ExcerptManager
@@ -35,16 +36,13 @@ class MainUI(QMainWindow):
 
     def setup_publish_tab(self):
         create_form_fields(self.publish_tab)
+        self.create_button("Publish", QRect(640, 465, 120, 40), self.publish_excerpt)
+        self.create_button("Clear", QRect(510, 465, 120, 40), self.clear_form)
 
-        publish_button = QPushButton(self.publish_tab)
-        publish_button.setText("Publish")
-        publish_button.setGeometry(QRect(640, 465, 120, 40))
-        publish_button.clicked.connect(self.publish_excerpt)
-
-        clear_button = QPushButton(self.publish_tab)
-        clear_button.setText("Clear")
-        clear_button.setGeometry(510, 465, 120, 40)
-        clear_button.clicked.connect(self.clear_form)
+    def create_button(self, text, geometry, callback):
+        button = QPushButton(text, self.publish_tab)
+        button.setGeometry(geometry)
+        button.clicked.connect(callback)
 
     def setup_edit_tab(self):
         self.edit_window = None
@@ -72,27 +70,22 @@ class MainUI(QMainWindow):
         self.publish_tab.body_field.clear()
 
     def load_excerpts(self):
-        try:
-            self.table.clear()
-        except AttributeError:
-            pass
+        if not hasattr(self, "table"):
+            self.table = QTableWidget(0, 1, self.edit_tab)
+            self.table.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+            self.table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+            self.table.horizontalHeader().hide()
+            self.table.verticalHeader().hide()
+            self.table.resize(800, 560)
 
         self.excerpts = self.excerpt_manager.list_excerpts()
-        
-        self.table = QTableWidget(len(self.excerpts), 1, self.edit_tab)
-        self.table.setFocusPolicy(Qt.FocusPolicy.NoFocus)
-        self.table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
-        self.table.horizontalHeader().hide()
-        self.table.verticalHeader().hide()
-        self.table.resize(800, 560)
+        self.table.setRowCount(len(self.excerpts))
 
         for row, excerpt in enumerate(self.excerpts):
             button = QPushButton(str(excerpt))
             button.setFocusPolicy(Qt.FocusPolicy.NoFocus)
             button.clicked.connect(self.on_clicked(excerpt))
             self.table.setCellWidget(row, 0, button)
-
-        self.table.show()
 
     def on_clicked(self, excerpt):
         def new_edit_window():

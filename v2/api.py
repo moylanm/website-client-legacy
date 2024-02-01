@@ -2,23 +2,18 @@
 import os
 import requests
 from requests.auth import HTTPBasicAuth
-from requests.exceptions import JSONDecodeError, RequestException
+from requests.exceptions import RequestException
 from dotenv import load_dotenv
-from typing import Optional
+from typing import Any, Optional, Dict
 
 load_dotenv()
 
-class ConnectionErrorException(Exception):
-    def __init__(self, message="Connection Error"):
-        super().__init__(message)
-
-class JSONDecodeErrorException(Exception):
-    def __init__(self, message="Failed to decode JSON response"):
-        super().__init__(message)
+class RequestAPIException(Exception):
+    def __init__(self, message="API Request Error", original_exception=None):
+        super().__init__(f"{message}: {str(original_exception)}")
 
 class RequestAPI:
     BASE_URL = "https://mylesmoylan.net/excerpts"
-    LIST_URL = f"{BASE_URL}/json"
 
     def __init__(self) -> None:
         username = os.getenv("USERNAME")
@@ -27,37 +22,32 @@ class RequestAPI:
             raise ValueError("Environment variables for USERNAME and PASSWORD must be set")
         self.auth = HTTPBasicAuth(username, password)
 
-    def _make_request(self, method: str, url: str, use_auth: bool = True, **kwargs) -> dict:
-        auth = self.auth if use_auth else None
-        try:
-            response = requests.request(method.upper(), url, auth=auth, **kwargs)
-            return {
-                "status_code": response.status_code,
-                "data": response.json()
-            }
-        except JSONDecodeError as e:
-            raise JSONDecodeErrorException() from e
-        except RequestException as e:
-            raise ConnectionErrorException() from e
+    def _make_request(self, method: str, url: str, use_auth: bool = True, **kwargs) -> Dict[str, Any]:
+        with requests.Session() as session:
+            session.auth = self.auth if use_auth else None
+            try:
+                response = session.request(method, url, **kwargs)
+                return {
+                    "status_code": response.status_code,
+                    "data": response.json()
+                }
+            except RequestException as e:
+                raise RequestAPIException(original_exception=e)
 
-    def list_excerpts(self) -> dict:
-        """Retrieve a list of excerpts from the API."""
-        return self._make_request("GET", self.LIST_URL, use_auth=False)
+    def list_excerpts(self) -> Dict[str, Any]:
+        url = f"{self.BASE_URL}/json"
+        return self._make_request("GET", url, use_auth=False)
 
-    def _publish_or_update_excerpt(self, method: str, id: Optional[str] = None, author: str = "", work: str = "", body: str = "") -> dict:
-        """Helper function to either publish a new excerpt or update an existing one."""
-        url = self.BASE_URL if method == "POST" else f"{self.BASE_URL}/{id}"
+    def _publish_or_update_excerpt(self, method: str, author: str, work: str, body: str, id: Optional[str] = None) -> Dict[str, Any]:
+        url = f"{self.BASE_URL}/{id}" if id else self.BASE_URL
         data = {"author": author, "work": work, "body": body}
         return self._make_request(method, url, json=data)
 
-    def publish_excerpt(self, author: str, work: str, body: str) -> dict:
-        """Publish a new excerpt."""
+    def publish_excerpt(self, author: str, work: str, body: str) -> Dict[str, Any]:
         return self._publish_or_update_excerpt("POST", author=author, work=work, body=body)
 
-    def update_excerpt(self, id: str, author: str, work: str, body: str) -> dict:
-        """Update an existing excerpt."""
-        return self._publish_or_update_excerpt("PATCH", id=id, author=author, work=work, body=body)
+    def update_excerpt(self, id: str, author: str, work: str, body: str) -> Dict[str, Any]:
+        return self._publish_or_update_excerpt("PATCH", author=author, work=work, body=body, id=id)
 
-    def delete_excerpt(self, id: str) -> dict:
-        """Delete an existing excerpt."""
+    def delete_excerpt(self, id: str) -> Dict[str, Any]:
         return self._make_request("DELETE", f"{self.BASE_URL}/{id}")

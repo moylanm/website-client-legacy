@@ -1,3 +1,4 @@
+# -.- coding: utf-8 -.-
 import math
 
 from excerpt import Excerpt
@@ -21,7 +22,9 @@ class EditWindow(QMainWindow):
     def setup_window(self):
         self.setWindowTitle(str(self.excerpt))
         self.resize(800, 600)
+        self.center_window()
 
+    def center_window(self):
         screen = QApplication.primaryScreen().geometry()
         screen_width = screen.width()
         screen_height = screen.height()
@@ -33,16 +36,13 @@ class EditWindow(QMainWindow):
 
     def init_ui(self):
         create_form_fields(self, self.excerpt)
+        self.create_button("Update", QRect(640, 465, 120, 40), self.update_excerpt)
+        self.create_button("Delete", QRect(510, 465, 120, 40), self.confirm_delete)
 
-        update_button = QPushButton(self)
-        update_button.setText("Update")
-        update_button.setGeometry(QRect(640, 465, 120, 40))
-        update_button.clicked.connect(self.update_excerpt)
-
-        delete_button = QPushButton(self)
-        delete_button.setText("Delete")
-        delete_button.setGeometry(510, 465, 120, 40)
-        delete_button.clicked.connect(self.delete_excerpt)
+    def create_button(self, text, geometry, callback):
+        button = QPushButton(text, self)
+        button.setGeometry(geometry)
+        button.clicked.connect(callback)
 
     def update_excerpt(self):
         author = self.author_field.text()
@@ -54,17 +54,15 @@ class EditWindow(QMainWindow):
         self.handle_response(response)
 
     def delete_excerpt(self):
+        response = self.excerpt_manager.delete_excerpt(self.excerpt.id)
+        self.handle_response(response)
+
+    def confirm_delete(self):
         mb = QMessageBox()
         mb.setInformativeText("Are you sure you want to delete this excerpt?")
         mb.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
-        ret = mb.exec()
-
-        if ret == QMessageBox.StandardButton.Yes:
-            mb.close()
-            response = self.excerpt_manager.delete_excerpt(self.excerpt.id)
-            self.handle_response(response)
-        else:
-            mb.close()
+        if mb.exec() == QMessageBox.StandardButton.Yes:
+            self.delete_excerpt()
 
     def handle_response(self, response):
         db = dialog_box(response["message"])

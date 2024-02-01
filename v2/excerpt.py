@@ -1,3 +1,4 @@
+# -.- coding: utf-8 -.-
 class Excerpt:
 
     def __init__(self, id, author, work, body):
