@@ -1,7 +1,7 @@
 # -.- coding: utf-8 -.-
 from PySide6.QtCore import Qt, QRect
 from edit_window import EditWindow
-from excerpt_manager import ExcerptManager
+from excerpt import ExcerptManager
 from helpers import create_form_fields, dialog_box
 from PySide6.QtWidgets import QHeaderView, QMainWindow, QPushButton, QTabWidget, QTableWidget, QWidget
 

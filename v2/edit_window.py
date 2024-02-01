@@ -1,8 +1,7 @@
 # -.- coding: utf-8 -.-
 import math
 
-from excerpt import Excerpt
-from excerpt_manager import ExcerptManager
+from excerpt import Excerpt, ExcerptManager
 from helpers import create_form_fields, dialog_box
 from PySide6.QtCore import Signal, QRect
 from PySide6.QtWidgets import QApplication, QMainWindow, QPushButton, QMessageBox
