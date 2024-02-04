@@ -48,7 +48,7 @@ func main() {
 	}
 
 	cfg.publishUrl = fmt.Sprintf("%s://%s:%d/excerpts", protocol, cfg.addr.host, cfg.addr.port)
-	cfg.listUrl = fmt.Sprintf("%s://%s:%d/json/excerpts", protocol, cfg.addr.host, cfg.addr.port)
+	cfg.listUrl = fmt.Sprintf("%s://%s:%d/excerpts/json", protocol, cfg.addr.host, cfg.addr.port)
 	cfg.windowSize = fyne.NewSize(750, 400)
 
 	gui := app.New()
