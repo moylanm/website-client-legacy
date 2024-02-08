@@ -94,3 +94,7 @@ class MainUI(QMainWindow):
             self.edit_window.show()
 
         return new_edit_window
+
+    def closeEvent(self, event) -> None:
+        self.excerpt_manager.api.close()
+        super(MainUI, self).closeEvent(event)
