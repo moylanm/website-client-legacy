@@ -25,7 +25,7 @@ class RequestAPI:
         self.session.auth = HTTPBasicAuth(username, password)
 
     def _make_request(self, method: str, endpoint: str, use_auth: bool = True, **kwargs) -> Dict[str, Any]:
-        url = f"{self.base_url}/{endpoint}"
+        url = f"{self.base_url}/{endpoint}".rstrip('/')
         auth = self.session.auth if use_auth else None
         try:
             response = self.session.request(method, url, auth=auth, **kwargs)
